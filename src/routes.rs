@@ -10,7 +10,7 @@ pub fn student_routes() ->  Router<Arc<AppState>> {
     Router::new()
         .route("/students", post(list_students_handler))
         .route("/students/:id", get(get_student_handler))
-        .route("/students/add", post(create_student_handler))
+        .route("/students/create", post(create_student_handler))
         .route("/students/:id", put(update_student_handler))
         .route("/students/:id", delete(delete_student_handler))
 }
