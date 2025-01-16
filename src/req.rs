@@ -1,6 +1,7 @@
 use crate::res::Res;
 use axum::extract::{FromRef, FromRequest, Request};
 use axum::{async_trait, Json};
+use axum::response::IntoResponse;
 use rbatis::PageRequest;
 use serde::de::DeserializeOwned;
 use serde::{Deserialize, Serialize};
@@ -11,16 +12,17 @@ pub struct ValidJson<T>(pub T);
 #[async_trait]
 impl<T, S> FromRequest<S> for ValidJson<T>
 where
-    T: DeserializeOwned,
+    T: Serialize + DeserializeOwned,
     S: Send + Sync,
 {
-    type Rejection = String;
+    type Rejection = Res<T>;
 
     async fn from_request(req: Request, state: &S) -> Result<Self, Self::Rejection> {
         // 使用 `Json` 提取器尝试解析请求体
         match Json::<T>::from_request(req, state).await {
             Ok(Json(value)) => Ok(ValidJson(value)),
-            Err(_) => Err(Res::<()>::err("参数格式非法").to_string()),
+            // Err(_) => Err(Res::<()>::err("参数格式非法").to_string()),
+            Err(_) => Err(Res::err("参数格式非法")),
         }
     }
 }

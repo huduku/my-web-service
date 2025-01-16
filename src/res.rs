@@ -1,3 +1,4 @@
+use core::fmt;
 use crate::error::Error;
 use axum::response::{IntoResponse, Response};
 use serde::de::DeserializeOwned;
@@ -30,7 +31,7 @@ impl<T> Res<T> {
     }
 
     pub fn is_err(&self) -> bool {
-        !self.ok
+        !self.is_ok()
     }
 
     pub fn ok_with(data: T) -> Self {
@@ -63,16 +64,22 @@ impl Res<()> {
     }
 }
 
-impl<T> From<Result<T, Error>> for Res<T> {
-    fn from(value: Result<T, Error>) -> Self {
+// impl<T> From<Result<T, Error>> for Res<T> {
+//     fn from(value: Result<T, Error>) -> Self {
+//         match value {
+//             Ok(data) => Res::ok_with(data),
+//             Err(e) => Res::<>::err(e.to_string())
+//         }
+//     }
+// }
+
+impl<T,E> From<Result<T, E>> for Res<T> 
+    where E: Display
+{
+    fn from(value: Result<T, E>) -> Self {
         match value {
             Ok(data) => Res::ok_with(data),
-            Err(e) => Res {
-                ok: false,
-                code: ERROR,
-                data: None,
-                msg: e.to_string(),
-            },
+            Err(e) => Res::<>::err(e.to_string())
         }
     }
 }
@@ -81,12 +88,12 @@ impl<T> From<Option<T>> for Res<T> {
     fn from(value: Option<T>) -> Self {
         match value {
             Some(data) => Res::ok_with(data),
-            None => Res::err("结果为空")
+            None => Res::err("查询结果为空")
         }
     }
 }
 
-impl<T> From<Page<T>> for PageRes<T> 
+impl<T> From<Page<T>> for PageRes<T>
     where T: Send + Sync
 {
     fn from(value: Page<T>) -> Self {
@@ -132,7 +139,7 @@ where
     fn into_response(self) -> Response {
         match self.0 {
             Some(data) => axum::Json(Res::ok_with(data)).into_response(),
-            None => axum::Json(Res::<()>::err("结果为空")).into_response()
+            None => axum::Json(Res::<()>::err("查询结果为空")).into_response()
         }
     }
 }
@@ -142,11 +149,12 @@ pub struct JsonRes<T, E>(pub Result<T, E>);
 impl<T, E> IntoResponse for JsonRes<T, E>
 where
     T: Serialize,
+    E: Display
 {
     fn into_response(self) -> Response {
         match self.0 {
             Ok(_) => axum::Json(Res::ok()).into_response(),
-            Err(_) => axum::Json(Res::<()>::err("操作失败")).into_response()
+            Err(e) => axum::Json(Res::<()>::err(e.to_string())).into_response()
         }
     }
 }
