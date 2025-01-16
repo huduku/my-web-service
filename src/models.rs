@@ -11,10 +11,8 @@ pub struct Student {
     pub address: Option<String>,
 }
 
-rbatis::crud!(Student{});
-
+rbatis::crud!(Student {});
 
 impl Student {
     htmlsql_select_page!(select_page(dto:&Option<Student>) -> Student => "src/resources/mapper/student.html");
 }
-

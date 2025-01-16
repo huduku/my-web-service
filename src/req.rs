@@ -1,9 +1,9 @@
-use axum::{async_trait, Json};
+use crate::res::Res;
 use axum::extract::{FromRef, FromRequest, Request};
+use axum::{async_trait, Json};
 use rbatis::PageRequest;
 use serde::de::DeserializeOwned;
 use serde::{Deserialize, Serialize};
-use crate::res::Res;
 
 #[must_use]
 pub struct ValidJson<T>(pub T);
@@ -20,7 +20,7 @@ where
         // 使用 `Json` 提取器尝试解析请求体
         match Json::<T>::from_request(req, state).await {
             Ok(Json(value)) => Ok(ValidJson(value)),
-            Err(_) =>  Err(Res::<()>::err("参数格式非法").to_string())
+            Err(_) => Err(Res::<()>::err("参数格式非法").to_string()),
         }
     }
 }
@@ -32,11 +32,12 @@ pub struct PageReq<T> {
     pub req: Option<T>,
 }
 
-
-
 impl<T> FromRef<PageReq<T>> for PageRequest {
     fn from_ref(value: &PageReq<T>) -> Self {
-        PageRequest::new(value.page_no.unwrap_or(1) as u64, value.page_size.unwrap_or(10) as u64)
+        PageRequest::new(
+            value.page_no.unwrap_or(1) as u64,
+            value.page_size.unwrap_or(10) as u64,
+        )
     }
 }
 
