@@ -8,6 +8,7 @@ mod services;
 
 mod error;
 mod req;
+mod student_controller;
 
 use axum::Router;
 use db::init_db;

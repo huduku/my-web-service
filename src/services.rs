@@ -9,8 +9,8 @@ use rbatis::{Page, PageRequest};
 use rbs::Error;
 
 pub async fn get_student(rb: &RBatis, id: i64) -> Option<Student> {
-    let rows = Student::select_by_column(rb, "id", id).await;
-    rows.ok().unwrap().pop()
+    let rows_res = Student::select_by_column(rb, "id", id).await;
+    rows_res.ok().unwrap_or(Vec::new()).pop()
 }
 
 pub async fn create_student(rb: &RBatis, student: Student) -> Result<ExecResult, Error> {
