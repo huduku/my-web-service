@@ -1,0 +1,25 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "https://raw.githubusercontent.com/rbatis/rbatis/master/rbatis-codegen/mybatis-3-mapper.dtd">
+<mapper>
+    <sql id="fields">
+        id, stu_no, name, age, class_id, address
+    </sql>
+    <select id="select_page">
+        ` select `
+        <include refid="fields"/>
+        ` from student `
+        <where>
+            <if test="dto.stu_no!=null">
+                ` and stu_no = #{dto.stu_no}`
+            </if>
+            <if test="dto.name!=null && dto.name!=''">
+                ` and name like concat('', #{dto.name}, '%')  `
+            </if>
+            <if test="dto.class_id!=null">
+                ` and class_id = #{dto.class_id}`
+            </if>
+        </where>
+        <if test="do_count  == false">
+            ` order by id desc `
+        </if>
+    </select>
+</mapper>
