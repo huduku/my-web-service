@@ -85,9 +85,13 @@ curl --location --request PUT 'http://127.0.0.1:3000/api/students/5' \
 }'
 ```
 
+# update batch
+
+
 # delete
 
 ```shell
 curl --location --request DELETE 'http://127.0.0.1:3000/api/students/5'
 ```
 
+# delete batch
