@@ -1,10 +1,8 @@
-use core::fmt;
-use crate::error::Error;
 use axum::response::{IntoResponse, Response};
+use rbatis::Page;
 use serde::de::DeserializeOwned;
 use serde::{Deserialize, Serialize};
 use std::fmt::{Display, Formatter};
-use rbatis::Page;
 
 const SUCCESS: &'static str = "10000";
 
@@ -20,6 +18,8 @@ pub struct Res<T> {
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct PageRes<T> {
+    pub page_no: u64,
+    pub page_size: u64,
     pub total: u64,
     pub rows: Option<Vec<T>>,
 }
@@ -64,14 +64,6 @@ impl Res<()> {
     }
 }
 
-// impl<T> From<Result<T, Error>> for Res<T> {
-//     fn from(value: Result<T, Error>) -> Self {
-//         match value {
-//             Ok(data) => Res::ok_with(data),
-//             Err(e) => Res::<>::err(e.to_string())
-//         }
-//     }
-// }
 
 impl<T,E> From<Result<T, E>> for Res<T> 
     where E: Display
@@ -98,6 +90,8 @@ impl<T> From<Page<T>> for PageRes<T>
 {
     fn from(value: Page<T>) -> Self {
         PageRes {
+            page_no: value.page_no,
+            page_size: value.page_size,
             total: value.total,
             rows: Some(value.records),
         }
