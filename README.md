@@ -27,10 +27,19 @@ cargo run
 
 # Request
 
+## retrive_list
 ```shell
+curl --location --request POST 'http://127.0.0.1:3000/api/students' \
+--header 'Content-Type: application/json' \
+--data-raw '{
+    "page_no": 1,
+    "page_size": 10
+}'
+```
 
-# retrive_page
+## retrive_page 
 
+```shell
 curl --location --request POST 'http://127.0.0.1:3000/api/students' \
 --header 'Content-Type: application/json' \
 --data-raw '{
@@ -40,12 +49,17 @@ curl --location --request POST 'http://127.0.0.1:3000/api/students' \
         "name": ""
     }
 }'
+```
 
-# retrive_get
+## retrive_detail
 
+```shell
 curl --location --request GET 'http://127.0.0.1:3000/api/students/5'
+```
 
 # create
+
+```shell
 curl --location --request POST 'http://127.0.0.1:3000/api/students/create' \
 --header 'Content-Type: application/json' \
 --data-raw '{
@@ -56,17 +70,21 @@ curl --location --request POST 'http://127.0.0.1:3000/api/students/create' \
     "address": "测试地址2"
 
 }'
+```
 
 # update
 
+```shell
 curl --location --request PUT 'http://127.0.0.1:3000/api/students/5' \
 --header 'Content-Type: application/json' \
 --data-raw '{
     "name": "李四"
 }'
+```
 
 # delete
 
+```shell
 curl --location --request DELETE 'http://127.0.0.1:3000/api/students/5'
 ```
 
