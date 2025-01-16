@@ -1,4 +1,4 @@
-use rbatis::{htmlsql_select_page, impl_select_page, PageRequest};
+use rbatis::htmlsql_select_page;
 use serde::{Deserialize, Serialize};
 
 #[derive(Clone, Debug, Serialize, Deserialize)]

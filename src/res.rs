@@ -1,40 +1,14 @@
 use crate::error::Error;
 use axum::response::{IntoResponse, Response};
-use rbatis::PageRequest;
 use serde::de::DeserializeOwned;
 use serde::{Deserialize, Serialize};
 use std::fmt::{Display, Formatter};
-use axum::extract::FromRef;
 
 const SUCCESS: &'static str  = "10000";
 
 const ERROR: &'static str  = "99999";
 
-#[derive(Debug, Serialize, Deserialize, Clone)]
-pub struct PageReq<T> {
-    pub page_no: Option<u32>,
-    pub page_size: Option<u16>,
-    pub req: Option<T>,
-}
 
-// impl<T> Into<PageRequest> for PageReq<T> {
-//     fn into(self) -> PageRequest {
-//         PageRequest::new(self.page_no.unwrap_or(1) as u64, self.page_size.unwrap_or(10) as u64)
-//     }
-// }
-
-
-impl<T> FromRef<PageReq<T>> for PageRequest {
-    fn from_ref(value: &PageReq<T>) -> Self {
-        PageRequest::new(value.page_no.unwrap_or(1) as u64, value.page_size.unwrap_or(10) as u64)
-    }
-}
-
-#[derive(Debug, Serialize, Deserialize, Clone)]
-pub struct PageRes<T> {
-    pub total: u64,
-    pub rows: Option<Vec<T>>,
-}
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct Res<T> {
@@ -54,7 +28,7 @@ impl<T> Res<T> {
         !self.ok
     }
     
-    pub fn ok_of(data: T) -> Self {
+    pub fn ok_with(data: T) -> Self {
         Self {
             ok: true,
             code: SUCCESS,
@@ -63,16 +37,15 @@ impl<T> Res<T> {
         }
     }
 
-    
-
-    pub fn err(msg: impl Into<String>) -> Self {
+    pub fn err(msg: impl Into<String>) -> Self{
         Self {
-            ok: true,
+            ok: false,
             code: ERROR,
             data: None,
             msg: msg.into()
         }
     }
+    
 }
 
 
@@ -89,9 +62,15 @@ impl Res<()> {
 
 impl<T> From<Result<T, Error>> for Res<T> {
     fn from(value: Result<T, Error>) -> Self {
+        
         match value {
-            Ok(data) => Res::ok_of(data),
-            Err(e) => Res::err(e.to_string())
+            Ok(data) => Res::ok_with(data),
+            Err(e) => Res {
+                ok: false,
+                code: ERROR,
+                data: None,
+                msg: e.to_string()
+            }
         }
     }
 }

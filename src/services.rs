@@ -1,12 +1,12 @@
-use axum::extract::FromRef;
 use crate::models::Student;
-use crate::reqres::*;
+use axum::extract::FromRef;
 
 use rbatis::rbatis::RBatis;
 
 use rbatis::rbdc::db::ExecResult;
 use rbatis::{Page, PageRequest};
 use rbs::Error;
+use crate::req::PageReq;
 
 pub async fn get_student(rb: &RBatis, id: i64) -> Option<Student> {
     let rows = Student::select_by_column(rb,"id",id).await;
