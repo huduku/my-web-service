@@ -27,35 +27,8 @@ cargo run
 
 # Request
 
-## retrive_list
-```shell
-curl --location --request POST 'http://127.0.0.1:3000/api/students' \
---header 'Content-Type: application/json' \
---data-raw '{
-    "page_no": 1,
-    "page_size": 10
-}'
-```
 
-## retrive_page 
 
-```shell
-curl --location --request POST 'http://127.0.0.1:3000/api/students' \
---header 'Content-Type: application/json' \
---data-raw '{
-    "page_no": 1,
-    "page_size": 10,
-    "req" : {
-        "name": ""
-    }
-}'
-```
-
-## retrive_detail
-
-```shell
-curl --location --request GET 'http://127.0.0.1:3000/api/students/5'
-```
 
 # create
 
@@ -69,6 +42,36 @@ curl --location --request POST 'http://127.0.0.1:3000/api/students/create' \
     "class_id": 5,
     "address": "测试地址2"
 
+}'
+```
+
+## retrive_detail
+
+```shell
+curl --location --request GET 'http://127.0.0.1:3000/api/students/5'
+```
+
+## retrive_page
+
+```shell
+curl --location --request POST 'http://127.0.0.1:3000/api/students' \
+--header 'Content-Type: application/json' \
+--data-raw '{
+    "page_no": 1,
+    "page_size": 10,
+    "req" : {
+        "name": ""
+    }
+}'
+```
+
+## retrive_list
+```shell
+curl --location --request POST 'http://127.0.0.1:3000/api/students' \
+--header 'Content-Type: application/json' \
+--data-raw '{
+    "page_no": 1,
+    "page_size": 10
 }'
 ```
 
