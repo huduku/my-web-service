@@ -20,7 +20,7 @@ where
         // 使用 `Json` 提取器尝试解析请求体
         match Json::<T>::from_request(req, state).await {
             Ok(Json(value)) => Ok(ValidJson(value)),
-            Err(_) => Err(Res::err("参数格式非法")),
+            Err(e) => Err(Res::err(String::from("参数格式非法: ") + e.body_text().as_str())),
         }
     }
 }
