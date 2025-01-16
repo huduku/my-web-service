@@ -1,10 +1,10 @@
-use crate::req::{PageReq, PageRes, ValidJson};
-use crate::res::Res;
+use crate::req::{PageReq, ValidJson};
+use crate::res::{JsonOpt, JsonRes, PageRes, Res};
 use crate::{models::Student, services::*, AppState};
 use axum::response::IntoResponse;
 use axum::{
-    extract::{Path, State},
-    response::Json,
+    extract::{Path, State}
+    ,
     routing::{delete, get, post, put},
     Router,
 };
@@ -23,20 +23,14 @@ async fn get_student_handler(
     State(srb): State<Arc<AppState>>,
     Path(id): Path<i64>,
 ) -> impl IntoResponse {
-    match get_student(&srb.rbatis, id).await {
-        Some(student) => Res::ok_with(student),
-        None => Res::err("Student not found"),
-    }
+    JsonOpt(get_student(&srb.rbatis, id).await)
 }
 
 async fn create_student_handler(
     State(srb): State<Arc<AppState>>,
     ValidJson(student): ValidJson<Student>,
 ) -> impl IntoResponse {
-    match create_student(&srb.rbatis, student).await {
-        Ok(_) => Res::ok(),
-        Err(e) => Res::err(e.to_string()),
-    }
+    JsonRes(create_student(&srb.rbatis, student).await)
 }
 
 async fn update_student_handler(
@@ -46,20 +40,14 @@ async fn update_student_handler(
 ) -> impl IntoResponse {
     let mut student = student;
     student.id = Some(id);
-    match update_student(&srb.rbatis, student).await {
-        Ok(_) => Res::ok(),
-        Err(e) => Res::err(e.to_string()),
-    }
+    JsonRes(update_student(&srb.rbatis, student).await)
 }
 
 pub async fn delete_student_handler(
     State(srb): State<Arc<AppState>>,
     Path(id): Path<i64>,
 ) -> impl IntoResponse {
-    match delete_student(&srb.rbatis, id).await {
-        Ok(_) => Res::ok(),
-        Err(e) => Res::err(e.to_string()),
-    }
+    JsonRes(delete_student(&srb.rbatis, id).await)
 }
 
 pub async fn list_students_handler(
@@ -69,15 +57,7 @@ pub async fn list_students_handler(
     req.page_no = Some(req.page_no.unwrap_or(1));
     req.page_size = Some(req.page_size.unwrap_or(10));
     match list_students(&srb.rbatis, req).await {
-        Ok(students) => {
-            let total = students.total;
-            let data = students.records;
-            let page_res = PageRes {
-                total: total,
-                rows: Some(data),
-            };
-            Res::ok_with(page_res)
-        }
+        Ok(students) => Res::from(PageRes::from(students)),
         Err(e) => Res::err(e.to_string()),
     }
 }

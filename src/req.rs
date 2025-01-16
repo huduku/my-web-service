@@ -41,8 +41,3 @@ impl<T> FromRef<PageReq<T>> for PageRequest {
     }
 }
 
-#[derive(Debug, Serialize, Deserialize, Clone)]
-pub struct PageRes<T> {
-    pub total: u64,
-    pub rows: Option<Vec<T>>,
-}
