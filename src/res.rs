@@ -34,7 +34,7 @@ impl<T> Res<T> {
         !self.is_ok()
     }
 
-    pub fn ok_with(data: T) -> Self {
+    pub fn of(data: T) -> Self {
         Self {
             ok: true,
             code: SUCCESS,
@@ -70,8 +70,8 @@ impl<T,E> From<Result<T, E>> for Res<T>
 {
     fn from(value: Result<T, E>) -> Self {
         match value {
-            Ok(data) => Res::ok_with(data),
-            Err(e) => Res::<>::err(e.to_string())
+            Ok(data) => Res::of(data),
+            Err(e) => Res::err(e.to_string())
         }
     }
 }
@@ -79,7 +79,7 @@ impl<T,E> From<Result<T, E>> for Res<T>
 impl<T> From<Option<T>> for Res<T> {
     fn from(value: Option<T>) -> Self {
         match value {
-            Some(data) => Res::ok_with(data),
+            Some(data) => Res::of(data),
             None => Res::err("查询结果为空")
         }
     }
@@ -101,7 +101,7 @@ impl<T> From<Page<T>> for PageRes<T>
 impl<T> From<PageRes<T>> for Res<PageRes<T>>
 {
     fn from(value: PageRes<T>) -> Self {
-        Res::ok_with(value)
+        Res::of(value)
     }
 }
 
@@ -132,8 +132,8 @@ where
 {
     fn into_response(self) -> Response {
         match self.0 {
-            Some(data) => axum::Json(Res::ok_with(data)).into_response(),
-            None => axum::Json(Res::<()>::err("查询结果为空")).into_response()
+            Some(data) => axum::Json(Res::of(data)).into_response(),
+            None => axum::Json(Res::<()>::err("数据为空!")).into_response()
         }
     }
 }
