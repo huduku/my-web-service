@@ -24,9 +24,8 @@ where
         
         match json_result {
             Ok(Json(value)) => {
-                let v = &value;
-                match DomainPrimitive::new(v) {
-                    Ok(valid_value) => Ok(ValidJson(v.clone())), // 校验通过
+                match DomainPrimitive::new(&value) {
+                    Ok(_) => Ok(ValidJson(value)), 
                     Err(e) => Err(Res::err(e)),
                 }
             }
