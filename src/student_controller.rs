@@ -45,7 +45,8 @@ pub async fn list_students_handler(
     req.page_no = Some(req.page_no.unwrap_or(1));
     req.page_size = Some(req.page_size.unwrap_or(10));
     match list_students(&srb.rbatis, req).await {
-        Ok(students) => Res::of(PageRes::from(students)),
+        Ok(students) => Res::<PageRes<Student>>::of(students.into()),
+        // Ok(students) => Res::of(PageRes::from(students)),
         Err(e) => Res::err(e.to_string()),
     }
 }
