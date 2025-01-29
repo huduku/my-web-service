@@ -10,24 +10,6 @@ use crate::dp::DomainPrimitive;
 pub struct ValidJson<T: Clone>(pub T);
 
 
-
-// #[async_trait]
-// impl<T, S> FromRequest<S> for ValidJson<T>
-// where
-//     T: Serialize + DeserializeOwned,
-//     S: Send + Sync,
-// {
-//     type Rejection = Res<T>;
-
-//     async fn from_request(req: Request, state: &S) -> Result<Self, Self::Rejection> {
-//         // 使用 `Json` 提取器尝试解析请求体
-//         match Json::<T>::from_request(req, state).await {
-//             Ok(Json(value)) => Ok(ValidJson(value)),
-//             Err(e) => Err(Res::err(String::from("参数格式非法: ") + e.body_text().as_str())),
-//         }
-//     }
-// }
-
 #[async_trait]
 impl<T, S> FromRequest<S> for ValidJson<T>
 where
@@ -42,8 +24,8 @@ where
         
         match json_result {
             Ok(Json(value)) => {
-                let v = value.clone();
-                match DomainPrimitive::new(v.clone()) {
+                let v = &value;
+                match DomainPrimitive::new(v) {
                     Ok(valid_value) => Ok(ValidJson(v.clone())), // 校验通过
                     Err(e) => Err(Res::err(e)),
                 }

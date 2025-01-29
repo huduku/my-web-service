@@ -5,10 +5,8 @@ use crate::{models::Student, req::PageReq};
 
 
 pub trait DomainPrimitive {
-
     type DP;
-
-    fn new(value: Self) -> Result<Self::DP, String> where Self: Sized;
+    fn new(value: &Self) -> Result<Self::DP, String> where Self: Sized;
 }
 
 #[derive(Debug, Serialize, Deserialize)]
@@ -24,16 +22,16 @@ impl DomainPrimitive for Student {
 
     type DP = StudentCreate;
     
-    fn new(value: Student) -> Result<StudentCreate, String> {
-        StudentCreate::try_from(value)
+    fn new(value: &Student) -> Result<StudentCreate, String> {
+        StudentCreate::try_from(value.to_owned())
     }
 }
 
 
-impl<T> DomainPrimitive for PageReq<T> {
+impl<T: Clone> DomainPrimitive for PageReq<T>{
     type DP = PageReq<T>;
-    fn new(value: PageReq<T>) -> Result<Self, String> where Self: Sized {
-        Ok(value)
+    fn new(value : &PageReq<T>) -> Result<Self, String> where Self: Sized {
+        Ok(value.clone())
     }
 }
 
