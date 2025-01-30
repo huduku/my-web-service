@@ -50,7 +50,7 @@ where
     T: Serialize + DeserializeOwned + DomainPrimitive<DP> + From<DP> + Clone, // 确保 T 可以解析
     DP: Clone + TryFrom<T> + Send + Sync + 'static,  // 确保 U 可以进行校验
 {
-    type Rejection = String;
+    type Rejection = Res<String>;
 
     async fn from_request(req: Request, state: &S) -> Result<Self, Self::Rejection> {
         // 1. 解析查询参数为 T
@@ -61,10 +61,10 @@ where
                 // 2. 进行校验并转换为 U
                 match DomainPrimitive::new(&value) {
                     Ok(domain_primitive) => Ok(ValidQuery(DP::into(domain_primitive), PhantomData)),  
-                    Err(e) => Err(Res::<()>::err(e).to_string()),
+                    Err(e) => Err(Res::err(e)),
                 }
             }
-            Err(e) => Err(Res::<()>::err(format!("参数格式非法: {}", e.body_text())).to_string()),
+            Err(e) => Err(Res::err(format!("参数格式非法: {}", e.body_text()))),
         }
     }
 }
