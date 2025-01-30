@@ -20,7 +20,7 @@ pub async fn get_student(rb: &RBatis, id: i64) -> Result<Student, String> {
             if rows.len() > 0 {
                 return Ok(rows.get(0).unwrap().to_owned());
             }
-            return Err("查询数据为空".to_string());
+            return Err("数据为空!".to_string());
         },
         Err(_) => Err("查询数据库异常".to_string())
     }
