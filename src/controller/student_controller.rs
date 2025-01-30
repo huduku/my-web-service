@@ -1,7 +1,7 @@
 use std::sync::Arc;
-use axum::extract::{Path, State};
+use axum::extract::State;
 use axum::response::IntoResponse;
-use crate::domain::primitive::dp::{Id, IdQuery};
+use crate::domain::primitive::dp::IdQuery;
 use crate::domain::primitive::students::{StudentCreate, StudentQuery, StudentUpdate};
 use crate::AppState;
 use crate::domain::model::student::Student;
@@ -11,7 +11,8 @@ use crate::service::student_services::{create_student,
     delete_student, 
     get_student, 
     list_students, 
-    update_student };
+    update_student 
+};
 
 pub(crate) async fn get_student_handler(
     State(srb): State<Arc<AppState>>,
@@ -36,19 +37,9 @@ pub(crate) async fn update_student_handler(
 
 pub async fn delete_student_handler(
     State(srb): State<Arc<AppState>>,
-    Path(id): Path<i64>,
+    ValidQuery(stu, ..): ValidQuery<Student, IdQuery>,
 ) -> impl IntoResponse {
-    let param = Id::new(Some(id));
-    match param {
-        Ok(id) => {
-            let delete_res = delete_student(&srb.rbatis, id.0).await;
-            match delete_res {
-                Ok(data) => return Res::of(data),
-                Err(e) => return Res::err(e.to_string()),
-            }
-        },
-        Err(e) =>  return Res::err(e),
-    }
+    JsonRes(delete_student(&srb.rbatis, stu.id.unwrap()).await)
 }
 
 pub async fn list_students_handler(
