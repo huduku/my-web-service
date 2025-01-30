@@ -6,7 +6,7 @@ pub struct Student {
     pub id: Option<i64>,
     pub stu_no: Option<String>,
     pub name: Option<String>,
-    pub age: Option<u8>,
+    pub age: Option<u16>,
     pub class_id: Option<u32>,
     pub address: Option<String>,
 }

@@ -1,28 +1,23 @@
 use std::sync::Arc;
 use axum::extract::{Path, State};
 use axum::response::IntoResponse;
-use crate::domain::primitive::students::{Id, StudentCreate, StudentQuery, StudentUpdate};
+use crate::domain::primitive::dp::{Id, IdQuery};
+use crate::domain::primitive::students::{StudentCreate, StudentQuery, StudentUpdate};
 use crate::AppState;
 use crate::domain::model::student::Student;
-use crate::dto::req::{PageReq, ValidJson};
-use crate::dto::res::{ JsonRes, PageRes, Res};
-use crate::service::student_services::{create_student, delete_student, get_student, list_students, update_student};
+use crate::dto::req::{PageReq, ValidJson, ValidQuery};
+use crate::dto::res::{ JsonOpt, JsonRes, PageRes, Res};
+use crate::service::student_services::{create_student, 
+    delete_student, 
+    get_student, 
+    list_students, 
+    update_student };
 
 pub(crate) async fn get_student_handler(
     State(srb): State<Arc<AppState>>,
-    Path(id): Path<i64>,
+    ValidQuery(stu, ..): ValidQuery<Student, IdQuery>,
 ) -> impl IntoResponse {
-    let param = Id::new(Some(id));
-    match param {
-        Ok(id) => {
-            let detail = get_student(&srb.rbatis, id.0).await;
-            match detail {
-                Some(data) => return Res::of(data),
-                None => return Res::err("查询结果为空"),
-            }
-        },
-        Err(e) =>  return Res::err(e),
-    }
+    JsonOpt(get_student(&srb.rbatis, stu.id.unwrap()).await)
 }
 
 pub(crate) async fn create_student_handler(

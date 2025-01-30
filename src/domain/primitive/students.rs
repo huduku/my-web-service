@@ -1,7 +1,16 @@
+use std::str;
+
 use serde::{Deserialize, Serialize};
 use crate::{domain::model::student::Student, dto::req::PageReq};
 
-use super::dp::{PageNo, PageSize};
+use super::dp::{DomainPrimitive, Id, IdQuery, PageNo, PageSize};
+
+
+impl DomainPrimitive<IdQuery> for Student {
+    fn new(value: &Self) -> Result<IdQuery, String> {
+        IdQuery::try_from(value.clone())
+    }
+}
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct StudentCreate {
@@ -14,6 +23,13 @@ pub struct StudentCreate {
 
 unsafe impl Send for StudentCreate {}
 unsafe impl Sync for StudentCreate {}
+
+
+impl DomainPrimitive<StudentCreate> for Student {
+    fn new(value: &Self) -> Result<StudentCreate, String> {
+        StudentCreate::try_from(value.clone())
+    }
+}
 
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
@@ -29,6 +45,13 @@ pub struct StudentUpdate {
 unsafe impl Send for StudentUpdate {}
 unsafe impl Sync for StudentUpdate {}
 
+
+impl DomainPrimitive<StudentUpdate> for Student {
+    fn new(value: &Self) -> Result<StudentUpdate, String> {
+        StudentUpdate::try_from(value.clone())
+    }
+}
+
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct StudentQuery {
     pub page_no: PageNo,
@@ -41,8 +64,12 @@ pub struct StudentQuery {
 unsafe impl Send for StudentQuery {}
 unsafe impl Sync for StudentQuery {}
 
-#[derive(Debug, Serialize, Deserialize, Clone)]
-pub struct Id(pub i64);
+impl DomainPrimitive<StudentQuery> for PageReq<Student> {
+    fn new(value: &Self) -> Result<StudentQuery, String> {
+        StudentQuery::try_from(value.clone())
+    }
+}
+
 
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
@@ -51,7 +78,6 @@ pub struct StuNo(String);
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct StuNoQuery(Option<String>);
 
-
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct UserName(String);
 
@@ -59,8 +85,7 @@ pub struct UserName(String);
 pub struct UserNameQuery(Option<String>);
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
-pub struct Age(u8);
-
+pub struct Age(u16);
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct ClassId(u32);
@@ -71,19 +96,6 @@ pub struct ClassIdQuery(Option<u32>);
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct Address(String);
 
-impl Id {
-    pub fn new(value: Option<i64>) -> Result<Self, String> {
-        match value {
-            Some(v) =>  {
-                if v <= 0 {
-                    return Err("id 参数非法".to_string());
-                }
-                return Ok(Id(v));
-            },
-            None => Err("id 不能为空".to_string())
-        }
-    }
-}
 
 impl StuNo {
     fn new(value: Option<String>) -> Result<Self, String> {
@@ -119,9 +131,6 @@ impl StuNoQuery {
     }
 }
 
-
-
-
 impl UserName {
     fn new(value: Option<String>) -> Result<Self, String> {
         match value {
@@ -150,13 +159,10 @@ impl UserNameQuery {
 
 
 impl Age {
-    fn new(value: Option<u8>) -> Result<Self, String> {
+    fn new(value: Option<u16>) -> Result<Self, String> {
         match value {
             Some(v) => {
-                if v < 0 {
-                    return Err("age 不能小于 0".to_string());
-                }
-                if v > 127 {
+                if v > 180 {
                     return Err("age 不能大于 127".to_string());
                 }
                 Ok(Age(v))
@@ -194,6 +200,31 @@ impl Address {
     }
 }
 
+
+impl TryFrom<Student> for IdQuery {
+    type Error = String;
+    fn try_from(value: Student) -> Result<Self, Self::Error> {
+        let id = Id::new(value.id)?;
+        Ok(IdQuery {
+            id 
+        })
+    }
+}
+
+impl From<IdQuery> for Student {
+
+    fn from(value: IdQuery) -> Self {
+        Self {
+            id: Some(value.id.0),
+            stu_no: None,
+            name: None,
+            age: None,
+            class_id: None,
+            address: None
+        }
+    }
+}
+
 impl TryFrom<Student> for StudentCreate {
     type Error = String;
     fn try_from(value: Student) -> Result<Self, Self::Error> {
@@ -211,6 +242,20 @@ impl TryFrom<Student> for StudentCreate {
             class_id,
             address,
         })
+    }
+}
+
+impl From<StudentCreate> for Student {
+
+    fn from(value: StudentCreate) -> Self {
+        Self {
+            id: None,
+            stu_no: Some(value.stu_no.0),
+            name: Some(value.name.0),
+            age: Some(value.age.0),
+            class_id: Some(value.class_id.0),
+            address: Some(value.address.0)
+        }
     }
 }
 
@@ -235,6 +280,20 @@ impl TryFrom<Student> for StudentUpdate {
     }
 }
 
+
+impl From<StudentUpdate> for Student {
+
+    fn from(value: StudentUpdate) -> Self {
+        Self {
+            id: Some(value.id.0),
+            stu_no: None,// 唯一索引， 不能更新此字段
+            name: Some(value.name.0),
+            age: Some(value.age.0),
+            class_id: Some(value.class_id.0),
+            address: Some(value.address.0)
+        }
+    }
+}
 
 impl TryFrom<PageReq<Student>> for StudentQuery {
     type Error = String;
@@ -268,34 +327,6 @@ impl TryFrom<PageReq<Student>> for StudentQuery {
             name,
             class_id,
         })
-    }
-}
-
-impl From<StudentCreate> for Student {
-
-    fn from(value: StudentCreate) -> Self {
-        Self {
-            id: None,
-            stu_no: Some(value.stu_no.0),
-            name: Some(value.name.0),
-            age: Some(value.age.0),
-            class_id: Some(value.class_id.0),
-            address: Some(value.address.0)
-        }
-    }
-}
-
-impl From<StudentUpdate> for Student {
-
-    fn from(value: StudentUpdate) -> Self {
-        Self {
-            id: Some(value.id.0),
-            stu_no: None,// 唯一索引， 不能更新此字段
-            name: Some(value.name.0),
-            age: Some(value.age.0),
-            class_id: Some(value.class_id.0),
-            address: Some(value.address.0)
-        }
     }
 }
 
