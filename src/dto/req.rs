@@ -28,7 +28,7 @@ where
         match json_result {
             Ok(Json(value)) => {
                 match DomainPrimitive::new(&value) {
-                    Ok(_) => Ok(ValidJson(value, PhantomData)), 
+                    Ok(domain_primitive) => Ok(ValidJson(DP::into(domain_primitive), PhantomData)), 
                     Err(e) => Err(Res::err(e)),
                 }
             }

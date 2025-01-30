@@ -1,7 +1,7 @@
 use std::sync::Arc;
 use axum::extract::{Path, State};
 use axum::response::IntoResponse;
-use crate::domain::primitive::dp::StudentCreate;
+use crate::domain::primitive::students::{StudentCreate, StudentUpdate};
 use crate::AppState;
 use crate::domain::model::student::Student;
 use crate::dto::req::{PageReq, ValidJson};
@@ -24,11 +24,9 @@ pub(crate) async fn create_student_handler(
 
 pub(crate) async fn update_student_handler(
     State(srb): State<Arc<AppState>>,
-    Path(id): Path<i64>,
-    ValidJson(student, _p): ValidJson<Student, StudentCreate>,
+   // Path(id): Path<i64>,
+    ValidJson(student, _p): ValidJson<Student, StudentUpdate>,
 ) -> impl IntoResponse {
-    let mut student = student;
-    student.id = Some(id);
     JsonRes(update_student(&srb.rbatis, student).await)
 }
 
