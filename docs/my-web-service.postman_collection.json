@@ -79,7 +79,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n    \"page_no\": 1,\n    \"page_size\": 10,\n    \"req\": {\n        \"name\": \"\",\n        \"class_id\": 12345\n    }\n}",
+					"raw": "{\n    \"page_no\": 1,\n    \"page_size\": 10,\n    \"req\": {\n        \"name\": \"\"\n    }\n}",
 					"options": {
 						"raw": {
 							"language": "json"
