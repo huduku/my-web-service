@@ -37,6 +37,7 @@ impl DomainPrimitive<StudentQuery> for PageReq<Student> {
     }
 }
 
+
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct PageNo(pub u32);
 

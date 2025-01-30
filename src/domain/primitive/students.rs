@@ -42,7 +42,7 @@ unsafe impl Send for StudentQuery {}
 unsafe impl Sync for StudentQuery {}
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
-pub struct Id(i64);
+pub struct Id(pub i64);
 
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
@@ -72,7 +72,7 @@ pub struct ClassIdQuery(Option<u32>);
 pub struct Address(String);
 
 impl Id {
-    fn new(value: Option<i64>) -> Result<Self, String> {
+    pub fn new(value: Option<i64>) -> Result<Self, String> {
         match value {
             Some(v) =>  Ok(Id(v)),
             None => Err("id 不能为空".to_string())
