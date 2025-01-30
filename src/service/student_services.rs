@@ -6,9 +6,7 @@ use axum::extract::FromRef;
 use rbatis::rbatis::RBatis;
 
 use crate::dto::req::PageReq;
-use rbatis::rbdc::db::ExecResult;
 use rbatis::{Page, PageRequest};
-use rbatis::Error;
 
 
 
