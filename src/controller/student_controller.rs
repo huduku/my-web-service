@@ -6,7 +6,7 @@ use crate::domain::primitive::students::{StudentCreate, StudentQuery, StudentUpd
 use crate::AppState;
 use crate::domain::model::student::Student;
 use crate::dto::req::{PageReq, ValidJson, ValidQuery};
-use crate::dto::res::{ JsonOpt, JsonRes, PageRes, Res};
+use crate::dto::res::{JsonRes, PageRes, Res};
 use crate::service::student_services::{create_student, 
     delete_student, 
     get_student, 
@@ -18,7 +18,7 @@ pub(crate) async fn get_student_handler(
     State(srb): State<Arc<AppState>>,
     ValidQuery(stu, ..): ValidQuery<Student, IdQuery>,
 ) -> impl IntoResponse {
-    JsonOpt(get_student(&srb.rbatis, stu.id.unwrap()).await)
+    JsonRes(get_student(&srb.rbatis, stu.id.unwrap()).await)
 }
 
 pub(crate) async fn create_student_handler(
