@@ -49,14 +49,14 @@ pub struct Id(i64);
 pub struct StuNo(String);
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
-pub struct StuNoQuery(String);
+pub struct StuNoQuery(Option<String>);
 
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct UserName(String);
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
-pub struct UserNameQuery(String);
+pub struct UserNameQuery(Option<String>);
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct Age(u8);
@@ -105,11 +105,11 @@ impl StuNoQuery {
         match value {
             Some(v) => {
                 if v.is_empty() {
-                    return Ok(StuNoQuery("".to_string()));
+                    return Ok(StuNoQuery(None));
                 }
-                Ok(StuNoQuery(v))
+                Ok(StuNoQuery(Some(v)))
             },
-            None => Ok(StuNoQuery("".to_string()))
+            None => Ok(StuNoQuery(None))
         }
     }
 }
@@ -131,14 +131,14 @@ impl UserNameQuery {
         match value {
             Some(v) => {
                 if v.is_empty() {
-                    return Ok(UserNameQuery("".to_string()));
+                    return Ok(UserNameQuery(None));
                 }
                 if v.len() < 3 {
                     return Err("name为空或者长度不能小于 3".to_string());
                 }
-                Ok(UserNameQuery(v))
+                Ok(UserNameQuery(Some(v)))
             },
-            None => Ok(UserNameQuery("".to_string()))
+            None => Ok(UserNameQuery(None))
         }
     }
 }
@@ -249,8 +249,8 @@ impl TryFrom<PageReq<Student>> for StudentQuery {
                 class_id = ClassIdQuery::new(v.class_id)?;
             },
             None=> {
-                stu_no = StuNoQuery("".to_string());
-                name = UserNameQuery("".to_string());
+                stu_no = StuNoQuery(None);
+                name = UserNameQuery(None);
                 class_id = ClassIdQuery(None);
             }
         }
@@ -302,8 +302,8 @@ impl From<StudentQuery> for PageReq<Student> {
             page_size: Some(value.page_size.0),
             req: Some(Student {
                 id: None,
-                stu_no: Some(value.stu_no.0),
-                name: Some(value.name.0),
+                stu_no: value.stu_no.0,
+                name: value.name.0,
                 age: None,
                 class_id: value.class_id.0,
                 address: None,
