@@ -1,3 +1,3 @@
 
-pub mod model;
-pub mod primitive;
+pub mod models;
+pub mod primitives;

@@ -1,10 +1,10 @@
 use std::sync::Arc;
 use axum::extract::State;
 use axum::response::IntoResponse;
-use crate::domain::primitive::dp::IdQuery;
-use crate::domain::primitive::students::{StudentCreate, StudentQuery, StudentUpdate};
+use crate::domain::primitives::dp::IdQuery;
+use crate::domain::primitives::students::{StudentCreate, StudentQuery, StudentUpdate};
 use crate::AppState;
-use crate::domain::model::student::Student;
+use crate::domain::models::student::Student;
 use crate::dto::req::{PageReq, ValidJson, ValidQuery};
 use crate::dto::res::{JsonRes, PageRes, Res};
 use crate::service::student_services::{create_student, 

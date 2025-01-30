@@ -6,7 +6,7 @@ use axum::{async_trait, Json};
 use rbatis::PageRequest;
 use serde::de::DeserializeOwned;
 use serde::{Deserialize, Serialize};
-use crate::domain::primitive::dp::DomainPrimitive;
+use crate::domain::primitives::dp::DomainPrimitive;
 
 #[must_use]
 #[derive(Clone, Serialize, Deserialize)]

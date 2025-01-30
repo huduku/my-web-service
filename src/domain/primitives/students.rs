@@ -1,7 +1,7 @@
 use std::str;
 
 use serde::{Deserialize, Serialize};
-use crate::{domain::model::student::Student, dto::req::PageReq};
+use crate::{domain::models::student::Student, dto::req::PageReq};
 
 use super::dp::{DomainPrimitive, Id, IdQuery, PageNo, PageSize};
 
