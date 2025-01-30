@@ -12,6 +12,7 @@ pub struct Student {
 }
 
 rbatis::crud!(Student {});
+rbatis::impl_select!(Student{select_by_id(id: i64) -> Option => "`where id = #{id} limit 1`"});
 
 impl Student {
     htmlsql_select_page!(select_page(dto:&Option<Student>) -> Student => "src/resources/mapper/student.html");

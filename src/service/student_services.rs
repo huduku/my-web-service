@@ -8,19 +8,14 @@ use rbatis::rbdc::db::ExecResult;
 use rbatis::{Page, PageRequest};
 use rbs::Error;
 
-// pub async fn get_student(rb: &RBatis, id: i64) -> Option<Student> {
-//     let rows_res = Student::select_by_column(rb, "id", id).await;
-//     rows_res.ok().unwrap_or(Vec::new()).pop()
-// }
-
 pub async fn get_student(rb: &RBatis, id: i64) -> Result<Student, String> {
-    let rows_res = Student::select_by_column(rb, "id", id).await;
+    let rows_res = Student::select_by_id(rb, id).await;
     match rows_res {
-        Ok(rows) => {
-            if rows.len() > 0 {
-                return Ok(rows.get(0).unwrap().to_owned());
+        Ok(row_opt) => {
+            match row_opt {
+                Some(row) => Ok(row),
+                None => Err("数据为空!".to_string())
             }
-            return Err("数据为空!".to_string());
         },
         Err(_) => Err("数据库异常".to_string())
     }

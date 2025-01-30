@@ -147,7 +147,7 @@ where
 {
     fn into_response(self) -> Response {
         match self.0 {
-            Ok(_) => axum::Json(Res::ok()).into_response(),
+            Ok(v) => axum::Json(Res::of(v)).into_response(),
             Err(e) => axum::Json(Res::<()>::err(e.to_string())).into_response()
         }
     }
