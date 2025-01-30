@@ -1,15 +1,14 @@
 
 use serde::{Deserialize, Serialize};
 
-use crate::{models::Student, req::PageReq};
+use crate::models::Student;
 
 
-pub trait DomainPrimitive {
-    type DP;
-    fn new(value: &Self) -> Result<Self::DP, String> where Self: Sized;
+pub trait DomainPrimitive<T> {
+    fn new(value: &Self) -> Result<T, String>;
 }
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct StudentCreate {
     pub stu_no: StuNo,
     pub name: UserName,
@@ -18,41 +17,41 @@ pub struct StudentCreate {
     pub address: Address,
 }
 
-impl DomainPrimitive for Student {
+unsafe impl Send for StudentCreate {}
+unsafe impl Sync for StudentCreate {}
 
-    type DP = StudentCreate;
-    
-    fn new(value: &Student) -> Result<StudentCreate, String> {
-        StudentCreate::try_from(value.to_owned())
+impl DomainPrimitive<StudentCreate> for Student {
+    fn new(value: &Self) -> Result<StudentCreate, String> {
+        StudentCreate::try_from(value.clone())
     }
 }
 
 
-impl<T: Clone> DomainPrimitive for PageReq<T>{
-    type DP = PageReq<T>;
-    fn new(value : &PageReq<T>) -> Result<Self, String> where Self: Sized {
+impl<T: Clone> DomainPrimitive<T> for T{
+   
+    fn new(value : &T) -> Result<Self, String> where Self: Sized {
         Ok(value.clone())
     }
 }
 
 
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct StuNo(String);
 
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct UserName(String);
 
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct Age(u8);
 
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct ClassId(u32);
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct Address(String);
 
 

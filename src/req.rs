@@ -1,3 +1,5 @@
+use std::marker::PhantomData;
+
 use crate::res::Res;
 use axum::extract::{FromRef, FromRequest, Request};
 use axum::{async_trait, Json};
@@ -7,13 +9,14 @@ use serde::{Deserialize, Serialize};
 use crate::dp::DomainPrimitive;
 
 #[must_use]
-pub struct ValidJson<T: Clone>(pub T);
+pub struct ValidJson<T: Clone, DP: Clone>(pub T, pub PhantomData<DP>);
 
 
 #[async_trait]
-impl<T, S> FromRequest<S> for ValidJson<T>
+impl<T, S, DP> FromRequest<S> for ValidJson<T, DP>
 where
-    T: Serialize + DeserializeOwned + DomainPrimitive + Clone,
+    T: Serialize + DeserializeOwned + DomainPrimitive<DP> + From<DP> + Clone,
+    DP: Clone + TryFrom<T> + Send + Sync + 'static,
     S: Send + Sync,
 {
     type Rejection = Res<String>;
@@ -25,7 +28,7 @@ where
         match json_result {
             Ok(Json(value)) => {
                 match DomainPrimitive::new(&value) {
-                    Ok(_) => Ok(ValidJson(value)), 
+                    Ok(_) => Ok(ValidJson(value, PhantomData)), 
                     Err(e) => Err(Res::err(e)),
                 }
             }
