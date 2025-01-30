@@ -1,4 +1,6 @@
+
 use crate::domain::model::student::Student;
+use crate::dto::res::DbRes;
 use axum::extract::FromRef;
 
 use rbatis::rbatis::RBatis;
@@ -6,18 +8,16 @@ use rbatis::rbatis::RBatis;
 use crate::dto::req::PageReq;
 use rbatis::rbdc::db::ExecResult;
 use rbatis::{Page, PageRequest};
-use rbs::Error;
+use rbatis::Error;
+
+
 
 pub async fn get_student(rb: &RBatis, id: i64) -> Result<Student, String> {
-    let rows_res = Student::select_by_id(rb, id).await;
-    match rows_res {
-        Ok(row_opt) => {
-            match row_opt {
-                Some(row) => Ok(row),
-                None => Err("数据为空!".to_string())
-            }
-        },
-        Err(_) => Err("数据库异常".to_string())
+    let DbRes(res) = Student::select_by_id(rb, id).await.into();
+    // let res = res?;
+    match res? {
+        Some(row) => Ok(row),
+        None => Err("数据为空!".to_string())
     }
 }
 

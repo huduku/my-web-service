@@ -16,3 +16,11 @@ pub async fn init_db() -> RBatis {
 
     rb
 }
+
+pub struct DbResult<T>(pub Result<T, String>);
+
+impl<T> From<Result<T, rbatis::Error>> for DbResult<T> {
+    fn from(value: Result<T, rbatis::Error>) -> Self {
+        DbResult(value.map_err(|_| "数据库异常".to_string()))
+    }
+}

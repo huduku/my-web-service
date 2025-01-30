@@ -152,3 +152,13 @@ where
         }
     }
 }
+
+
+
+pub struct DbRes<T>(pub Result<T, String>);
+
+impl<T> From<Result<T, rbatis::Error>> for DbRes<T> {
+    fn from(value: Result<T, rbatis::Error>) -> Self {
+        DbRes(value.map_err(|_| "数据库异常".to_string()))
+    }
+}
