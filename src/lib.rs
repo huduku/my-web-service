@@ -8,6 +8,8 @@ pub mod route;
 
 pub mod dto;
 
+pub mod err;
+
 pub mod service;
 
 pub mod controller;
