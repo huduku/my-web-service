@@ -1,7 +1,7 @@
 
 use serde::{Deserialize, Serialize};
 
-use crate::models::Student;
+use crate::domain::model::student::Student;
 
 
 pub trait DomainPrimitive<T> {

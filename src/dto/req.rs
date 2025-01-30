@@ -1,12 +1,12 @@
 use std::marker::PhantomData;
 
-use crate::res::Res;
+use crate::dto::res::Res;
 use axum::extract::{FromRef, FromRequest, Request};
 use axum::{async_trait, Json};
 use rbatis::PageRequest;
 use serde::de::DeserializeOwned;
 use serde::{Deserialize, Serialize};
-use crate::dp::DomainPrimitive;
+use crate::domain::primitive::dp::DomainPrimitive;
 
 #[must_use]
 pub struct ValidJson<T: Clone, DP: Clone>(pub T, pub PhantomData<DP>);

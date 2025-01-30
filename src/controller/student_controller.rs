@@ -1,12 +1,12 @@
 use std::sync::Arc;
 use axum::extract::{Path, State};
 use axum::response::IntoResponse;
-use crate::dp::StudentCreate;
+use crate::domain::primitive::dp::StudentCreate;
 use crate::AppState;
-use crate::models::Student;
-use crate::req::{PageReq, ValidJson};
-use crate::res::{JsonOpt, JsonRes, PageRes, Res};
-use crate::services::{create_student, delete_student, get_student, list_students, update_student};
+use crate::domain::model::student::Student;
+use crate::dto::req::{PageReq, ValidJson};
+use crate::dto::res::{JsonOpt, JsonRes, PageRes, Res};
+use crate::service::services::{create_student, delete_student, get_student, list_students, update_student};
 
 pub(crate) async fn get_student_handler(
     State(srb): State<Arc<AppState>>,

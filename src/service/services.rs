@@ -1,9 +1,9 @@
-use crate::models::Student;
+use crate::domain::model::student::Student;
 use axum::extract::FromRef;
 
 use rbatis::rbatis::RBatis;
 
-use crate::req::PageReq;
+use crate::dto::req::PageReq;
 use rbatis::rbdc::db::ExecResult;
 use rbatis::{Page, PageRequest};
 use rbs::Error;

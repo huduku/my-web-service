@@ -1,27 +1,11 @@
-
-
-mod db;
-mod models;
-mod res;
-mod routes;
-mod services;
-
-mod error;
-mod req;
-mod student_controller;
-mod dp;
-
 use axum::Router;
-use db::init_db;
 use fast_log::plugin::file_split::{DateType, KeepType, Rolling, RollingType};
 use fast_log::Config;
-use rbatis::rbatis::RBatis;
-use routes::student_routes;
+use my_web_service::db::pool::init_db;
+use my_web_service::route::routes::student_routes;
+use my_web_service::AppState;
 use std::sync::Arc;
 
-pub struct AppState {
-    pub rbatis: RBatis,
-}
 #[tokio::main]
 async fn main() {
     init_log();

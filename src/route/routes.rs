@@ -1,4 +1,4 @@
-use crate::student_controller;
+use crate::controller::student_controller;
 use crate::AppState;
 use axum::{
     routing::{delete, get, post, put},
