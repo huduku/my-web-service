@@ -9,6 +9,7 @@ use serde::{Deserialize, Serialize};
 use crate::domain::primitive::dp::DomainPrimitive;
 
 #[must_use]
+#[derive(Clone, Serialize, Deserialize)]
 pub struct ValidJson<T: Clone, DP: Clone>(pub T, pub PhantomData<DP>);
 
 
@@ -22,11 +23,12 @@ where
     type Rejection = Res<String>;
 
     async fn from_request(req: Request, state: &S) -> Result<Self, Self::Rejection> {
-        // 先解析 JSON 成 `TSource`（如 `Student`）
+
         let json_result = Json::<T>::from_request(req, state).await;
         
         match json_result {
             Ok(Json(value)) => {
+                // 使用 DomainPrimitive::new(&value) 做校验
                 match DomainPrimitive::new(&value) {
                     Ok(domain_primitive) => Ok(ValidJson(DP::into(domain_primitive), PhantomData)), 
                     Err(e) => Err(Res::err(e)),
@@ -38,13 +40,14 @@ where
 }
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
-pub struct PageReq<T> {
+pub struct PageReq<T: Clone> {
     pub page_no: Option<u32>,
     pub page_size: Option<u16>,
     pub req: Option<T>,
 }
 
-impl<T> FromRef<PageReq<T>> for PageRequest {
+
+impl<T: Clone> FromRef<PageReq<T>> for PageRequest {
     fn from_ref(value: &PageReq<T>) -> Self {
         PageRequest::new(
             value.page_no.unwrap_or(1) as u64,

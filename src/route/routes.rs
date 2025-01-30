@@ -1,7 +1,7 @@
 use crate::controller::student_controller;
 use crate::AppState;
 use axum::{
-    routing::{delete, get, post, put},
+    routing::{delete, get, post},
     Router,
 };
 use std::sync::Arc;

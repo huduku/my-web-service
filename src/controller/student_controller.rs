@@ -1,7 +1,7 @@
 use std::sync::Arc;
 use axum::extract::{Path, State};
 use axum::response::IntoResponse;
-use crate::domain::primitive::students::{StudentCreate, StudentUpdate};
+use crate::domain::primitive::students::{StudentCreate, StudentQuery, StudentUpdate};
 use crate::AppState;
 use crate::domain::model::student::Student;
 use crate::dto::req::{PageReq, ValidJson};
@@ -39,10 +39,8 @@ pub async fn delete_student_handler(
 
 pub async fn list_students_handler(
     State(srb): State<Arc<AppState>>,
-    ValidJson(mut req, _p, ): ValidJson<PageReq<Student>, PageReq<Student>>,
+    ValidJson(req, ..): ValidJson<PageReq<Student>, StudentQuery>,
 ) -> impl IntoResponse {
-    req.page_no = Some(req.page_no.unwrap_or(1));
-    req.page_size = Some(req.page_size.unwrap_or(10));
     match list_students(&srb.rbatis, req).await {
         Ok(students) => Res::<PageRes<Student>>::of(students.into()),
         // Ok(students) => Res::of(PageRes::from(students)),
