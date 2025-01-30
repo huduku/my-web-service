@@ -6,7 +6,7 @@ use crate::AppState;
 use crate::domain::model::student::Student;
 use crate::dto::req::{PageReq, ValidJson};
 use crate::dto::res::{JsonOpt, JsonRes, PageRes, Res};
-use crate::service::services::{create_student, delete_student, get_student, list_students, update_student};
+use crate::service::student_services::{create_student, delete_student, get_student, list_students, update_student};
 
 pub(crate) async fn get_student_handler(
     State(srb): State<Arc<AppState>>,

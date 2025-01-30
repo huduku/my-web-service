@@ -1,1 +1,1 @@
-pub mod services;
+pub mod student_services;
