@@ -22,7 +22,7 @@ pub async fn get_student(rb: &RBatis, id: i64) -> Result<Student, String> {
             }
             return Err("数据为空!".to_string());
         },
-        Err(_) => Err("查询数据库异常".to_string())
+        Err(_) => Err("数据库异常".to_string())
     }
 }
 
