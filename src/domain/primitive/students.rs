@@ -74,7 +74,12 @@ pub struct Address(String);
 impl Id {
     pub fn new(value: Option<i64>) -> Result<Self, String> {
         match value {
-            Some(v) =>  Ok(Id(v)),
+            Some(v) =>  {
+                if v <= 0 {
+                    return Err("id 参数非法".to_string());
+                }
+                return Ok(Id(v));
+            },
             None => Err("id 不能为空".to_string())
         }
     }
