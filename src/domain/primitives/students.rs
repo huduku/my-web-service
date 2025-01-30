@@ -1,104 +1,33 @@
-use std::str;
 
 use serde::{Deserialize, Serialize};
-use crate::{domain::models::student::Student, dto::req::PageReq};
-
-use super::dp::{DomainPrimitive, Id, IdQuery, PageNo, PageSize};
-
-
-impl DomainPrimitive<IdQuery> for Student {
-    fn new(value: &Self) -> Result<IdQuery, String> {
-        IdQuery::try_from(value.clone())
-    }
-}
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
-pub struct StudentCreate {
-    pub stu_no: StuNo,
-    pub name: UserName,
-    pub age: Age,
-    pub class_id: ClassId,
-    pub address: Address,
-}
-
-unsafe impl Send for StudentCreate {}
-unsafe impl Sync for StudentCreate {}
-
-
-impl DomainPrimitive<StudentCreate> for Student {
-    fn new(value: &Self) -> Result<StudentCreate, String> {
-        StudentCreate::try_from(value.clone())
-    }
-}
-
+pub struct StuNo(pub String);
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
-pub struct StudentUpdate {
-    pub id: Id,
-    // pub stu_no: StuNo,
-    pub name: UserName,
-    pub age: Age,
-    pub class_id: ClassId,
-    pub address: Address,
-}
-
-unsafe impl Send for StudentUpdate {}
-unsafe impl Sync for StudentUpdate {}
-
-
-impl DomainPrimitive<StudentUpdate> for Student {
-    fn new(value: &Self) -> Result<StudentUpdate, String> {
-        StudentUpdate::try_from(value.clone())
-    }
-}
+pub struct StuNoQuery(pub Option<String>);
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
-pub struct StudentQuery {
-    pub page_no: PageNo,
-    pub page_size: PageSize,
-    pub stu_no: StuNoQuery,
-    pub name: UserNameQuery,
-    pub class_id: ClassIdQuery,
-}
-
-unsafe impl Send for StudentQuery {}
-unsafe impl Sync for StudentQuery {}
-
-impl DomainPrimitive<StudentQuery> for PageReq<Student> {
-    fn new(value: &Self) -> Result<StudentQuery, String> {
-        StudentQuery::try_from(value.clone())
-    }
-}
-
-
+pub struct UserName(pub String);
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
-pub struct StuNo(String);
+pub struct UserNameQuery(pub Option<String>);
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
-pub struct StuNoQuery(Option<String>);
+pub struct Age(pub u16);
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
-pub struct UserName(String);
+pub struct ClassId(pub u32);
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
-pub struct UserNameQuery(Option<String>);
+pub struct ClassIdQuery(pub Option<u32>);
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
-pub struct Age(u16);
-
-#[derive(Debug, Serialize, Deserialize, Clone)]
-pub struct ClassId(u32);
-
-#[derive(Debug, Serialize, Deserialize, Clone)]
-pub struct ClassIdQuery(Option<u32>);
-
-#[derive(Debug, Serialize, Deserialize, Clone)]
-pub struct Address(String);
+pub struct Address(pub String);
 
 
 impl StuNo {
-    fn new(value: Option<String>) -> Result<Self, String> {
+    pub fn new(value: Option<String>) -> Result<Self, String> {
         match value {
             Some(v) => {
                 if v.is_empty() {
@@ -118,7 +47,7 @@ impl StuNo {
 }
 
 impl StuNoQuery {
-    fn new(value: Option<String>) -> Result<Self, String> {
+    pub fn new(value: Option<String>) -> Result<Self, String> {
         match value {
             Some(v) => {
                 if v.is_empty() {
@@ -132,7 +61,7 @@ impl StuNoQuery {
 }
 
 impl UserName {
-    fn new(value: Option<String>) -> Result<Self, String> {
+    pub fn new(value: Option<String>) -> Result<Self, String> {
         match value {
             Some(v) => Ok(UserName(v)),
             None => Err("name 不能为空".to_string())
@@ -141,7 +70,7 @@ impl UserName {
 }
 
 impl UserNameQuery {
-    fn new(value: Option<String>) -> Result<Self, String> {
+    pub fn new(value: Option<String>) -> Result<Self, String> {
         match value {
             Some(v) => {
                 if v.is_empty() {
@@ -159,7 +88,7 @@ impl UserNameQuery {
 
 
 impl Age {
-    fn new(value: Option<u16>) -> Result<Self, String> {
+    pub fn new(value: Option<u16>) -> Result<Self, String> {
         match value {
             Some(v) => {
                 if v > 180 {
@@ -173,7 +102,7 @@ impl Age {
 }
 
 impl ClassId {
-    fn new(value: Option<u32>) -> Result<Self, String> {
+    pub fn new(value: Option<u32>) -> Result<Self, String> {
         match value {
             Some(v) => Ok(ClassId(v)),
             None => Err("class_id 不能为空".to_string())
@@ -183,7 +112,7 @@ impl ClassId {
 
 
 impl ClassIdQuery {
-    fn new(value: Option<u32>) -> Result<Self, String> {
+    pub fn new(value: Option<u32>) -> Result<Self, String> {
         match value {
             Some(v) => Ok(ClassIdQuery(Some(v))),
             None => Ok(ClassIdQuery(None))
@@ -192,7 +121,7 @@ impl ClassIdQuery {
 }
 
 impl Address {
-    fn new(value: Option<String>) -> Result<Self, String> {
+    pub fn new(value: Option<String>) -> Result<Self, String> {
         match value {
             Some(v) => Ok(Address(v)),
             None => Err("address 不能为空".to_string())
@@ -201,169 +130,23 @@ impl Address {
 }
 
 
-impl TryFrom<Student> for IdQuery {
-    type Error = String;
-    fn try_from(value: Student) -> Result<Self, Self::Error> {
-        let id = Id::new(value.id)?;
-        Ok(IdQuery {
-            id 
-        })
-    }
-}
 
-impl From<IdQuery> for Student {
+// #[test]
+// fn test() {
+//     let stu = Student {
+//         id: Some(0),
+//         stu_no: Some("10247015".to_string()),
+//         name: Some("张三".to_string()),
+//         age: Some(180),
+//         class_id: Some(5),
+//         address:  Some("学号".to_string())
+//     };
 
-    fn from(value: IdQuery) -> Self {
-        Self {
-            id: Some(value.id.0),
-            stu_no: None,
-            name: None,
-            age: None,
-            class_id: None,
-            address: None
-        }
-    }
-}
+//     let stu = StudentCreate::try_from(stu);
+//     if stu.is_ok() {
+//         println!("ok: {}", serde_json::to_string(&stu.unwrap()).unwrap());
+//     } else {
+//         println!("err: {}", &stu.err().unwrap());
+//     }
 
-impl TryFrom<Student> for StudentCreate {
-    type Error = String;
-    fn try_from(value: Student) -> Result<Self, Self::Error> {
-
-        let stu_no = StuNo::new(value.stu_no)?;
-        let name =  UserName::new(value.name)?;
-        let age =  Age::new(value.age)?;
-        let class_id =  ClassId::new(value.class_id)?;
-        let address = Address::new(value.address)?;
-
-        Ok(Self {
-            stu_no,
-            name,
-            age,
-            class_id,
-            address,
-        })
-    }
-}
-
-impl From<StudentCreate> for Student {
-
-    fn from(value: StudentCreate) -> Self {
-        Self {
-            id: None,
-            stu_no: Some(value.stu_no.0),
-            name: Some(value.name.0),
-            age: Some(value.age.0),
-            class_id: Some(value.class_id.0),
-            address: Some(value.address.0)
-        }
-    }
-}
-
-
-impl TryFrom<Student> for StudentUpdate {
-    type Error = String;
-    fn try_from(value: Student) -> Result<Self, Self::Error> {
-
-        let id = Id::new(value.id)?;
-        let name =  UserName::new(value.name)?;
-        let age =  Age::new(value.age)?;
-        let class_id =  ClassId::new(value.class_id)?;
-        let address = Address::new(value.address)?;
-
-        Ok(Self {
-            id,
-            name,
-            age,
-            class_id,
-            address,
-        })
-    }
-}
-
-
-impl From<StudentUpdate> for Student {
-
-    fn from(value: StudentUpdate) -> Self {
-        Self {
-            id: Some(value.id.0),
-            stu_no: None,// 唯一索引， 不能更新此字段
-            name: Some(value.name.0),
-            age: Some(value.age.0),
-            class_id: Some(value.class_id.0),
-            address: Some(value.address.0)
-        }
-    }
-}
-
-impl TryFrom<PageReq<Student>> for StudentQuery {
-    type Error = String;
-    fn try_from(value: PageReq<Student>) -> Result<Self, Self::Error> {
-        
-        let page_no = PageNo::new(value.page_no)?;
-        let page_size=  PageSize::new(value.page_size)?;
-
-        let stu_no;
-        let name;
-        let class_id;
-
-        match value.req {
-            Some(v) => {
-                stu_no = StuNoQuery::new(v.stu_no)?;
-                name = UserNameQuery::new(v.name)?;
-                class_id = ClassIdQuery::new(v.class_id)?;
-            },
-            None=> {
-                stu_no = StuNoQuery(None);
-                name = UserNameQuery(None);
-                class_id = ClassIdQuery(None);
-            }
-        }
-
-
-        Ok(Self {
-            page_no,
-            page_size,
-            stu_no,
-            name,
-            class_id,
-        })
-    }
-}
-
-impl From<StudentQuery> for PageReq<Student> {
-
-    fn from(value: StudentQuery) -> Self {
-        Self {
-            page_no: Some(value.page_no.0),
-            page_size: Some(value.page_size.0),
-            req: Some(Student {
-                id: None,
-                stu_no: value.stu_no.0,
-                name: value.name.0,
-                age: None,
-                class_id: value.class_id.0,
-                address: None,
-            })
-        }
-    }
-}
-
-#[test]
-fn test() {
-    let stu = Student {
-        id: Some(0),
-        stu_no: Some("10247015".to_string()),
-        name: Some("张三".to_string()),
-        age: Some(180),
-        class_id: Some(5),
-        address:  Some("学号".to_string())
-    };
-
-    let stu = StudentCreate::try_from(stu);
-    if stu.is_ok() {
-        println!("ok: {}", serde_json::to_string(&stu.unwrap()).unwrap());
-    } else {
-        println!("err: {}", &stu.err().unwrap());
-    }
-
-}
+// }
