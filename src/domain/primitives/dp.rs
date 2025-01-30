@@ -15,12 +15,12 @@ pub trait DomainPrimitive<DP> {
 
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
-pub struct IdQuery {
+pub struct IdOper {
     pub id: Id
 }
 
-unsafe impl Send for IdQuery {}
-unsafe impl Sync for IdQuery {}
+unsafe impl Send for IdOper {}
+unsafe impl Sync for IdOper {}
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct Id(pub i64);

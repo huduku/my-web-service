@@ -1,29 +1,29 @@
 use crate::domain::{
     models::student::Student, 
-    primitives::dp::{DomainPrimitive, Id, IdQuery}
+    primitives::dp::{DomainPrimitive, Id, IdOper}
 };
 
 
-impl DomainPrimitive<IdQuery> for Student {
-    fn new(value: &Self) -> Result<IdQuery, String> {
-        IdQuery::try_from(value.clone())
+impl DomainPrimitive<IdOper> for Student {
+    fn new(value: &Self) -> Result<IdOper, String> {
+        IdOper::try_from(value.clone())
     }
 }
 
 
-impl TryFrom<Student> for IdQuery {
+impl TryFrom<Student> for IdOper {
     type Error = String;
     fn try_from(value: Student) -> Result<Self, Self::Error> {
         let id = Id::new(value.id)?;
-        Ok(IdQuery {
+        Ok(IdOper {
             id 
         })
     }
 }
 
-impl From<IdQuery> for Student {
+impl From<IdOper> for Student {
 
-    fn from(value: IdQuery) -> Self {
+    fn from(value: IdOper) -> Self {
         Self {
             id: Some(value.id.0),
             stu_no: None,
