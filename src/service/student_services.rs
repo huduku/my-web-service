@@ -48,16 +48,6 @@ pub async fn delete_student(rb: &RBatis, id: i64) -> Result<(), String> {
     return Ok(());
 }
 
-// pub async fn list_students(
-//     rb: &RBatis,
-//     stu_page_req: PageReq<Student>,
-// ) -> rbatis::Result<Page<Student>> {
-//     let page = PageRequest::from_ref(&stu_page_req);
-//     let stu = &stu_page_req.req;
-//     Student::select_page(rb, &page, &stu).await
-// }
-
-
 pub async fn list_students(rb: &RBatis, stu_page_req: PageReq<Student>,) 
     -> Result<Page<Student>, String> {
     let page = PageRequest::from_ref(&stu_page_req);
