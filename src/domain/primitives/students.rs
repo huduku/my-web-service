@@ -33,7 +33,7 @@ impl StuNo {
                 if v.is_empty() {
                     return Err("stu_no 不能为空值".to_string());
                 }
-                if v.len() < 8 {
+                if v.chars().count() < 8 {
                     return Err("stu_no 长度不能小于 8".to_string());
                 }
                 if !v.chars().all(|c| c.is_ascii_alphanumeric()) {
@@ -76,8 +76,8 @@ impl UserNameQuery {
                 if v.is_empty() {
                     return Ok(UserNameQuery(None));
                 }
-                if v.len() < 3 {
-                    return Err("name为空或者长度不能小于 3".to_string());
+                if v.chars().count() < 3 {
+                    return Err("name必须为空或者长度不能小于3".to_string());
                 }
                 Ok(UserNameQuery(Some(v)))
             },

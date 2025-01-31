@@ -34,7 +34,7 @@ impl TryFrom<PageReq<Student>> for StudentQuery {
         let page_size=  PageSize::new(value.page_size)?;
 
         let stu_no;
-        let name;
+        let name: UserNameQuery;
         let class_id;
 
         match value.req {
