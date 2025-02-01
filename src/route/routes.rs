@@ -5,7 +5,6 @@ use axum::{
     Router,
 };
 use std::sync::Arc;
-use crate::controller::student_controller::list_students_handler;
 
 pub fn student_routes() -> Router<Arc<AppState>> {
     Router::new()
