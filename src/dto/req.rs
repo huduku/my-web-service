@@ -1,73 +1,172 @@
+use std::collections::HashMap;
 use std::marker::PhantomData;
 
 use crate::dto::res::Res;
-use axum::extract::{FromRef, FromRequest, Query, Request};
+use axum::extract::{FromRef, FromRequest, Multipart, Query, Request};
 use axum::{async_trait, Form, Json};
 use rbatis::PageRequest;
 use serde::de::DeserializeOwned;
 use serde::{Deserialize, Serialize};
-use crate::domain::primitives::dp::DomainPrimitive;
+use crate::domain::primitives::dp::{DomainPrimitive, MultipartDomainPrimitive};
 
-// #[must_use]
-// #[derive(Clone, Serialize, Deserialize)]
-// pub struct ValidJson<T: Clone, DP: Clone>(pub T, pub PhantomData<DP>);
-
-// #[must_use]
-// #[derive(Clone, Serialize, Deserialize)]
-// pub struct ValidQuery<T: Clone, DP: Clone>(pub T, pub PhantomData<DP>);
-
-// #[async_trait]ß
-// impl<T, S, DP> FromRequest<S> for ValidJson<T, DP>
-// where
-//     T: Serialize + DeserializeOwned + DomainPrimitive<DP> + From<DP> + Clone + Send + Sync + 'static,
-//     DP: Clone + TryFrom<T> + Send + Sync + 'static,
-//     S: Send + Sync,
-// {
-//     type Rejection = Res<String>;
-
-//     async fn from_request(req: Request, state: &S) -> Result<Self, Self::Rejection> {
-
-//         let json_result = Json::<T>::from_request(req, state).await;
-        
-//         match json_result {
-//             Ok(Json(value)) => {
-//                 // 使用 DomainPrimitive::new(&value) 做校验
-//                 match DomainPrimitive::new(&value) {
-//                     Ok(domain_primitive) => Ok(ValidJson(DP::into(domain_primitive), PhantomData)), 
-//                     Err(e) => Err(Res::err(e)),
-//                 }
-//             }
-//             Err(e) => Err(Res::err(format!("参数格式非法: {}", e.body_text()))),
-//         }
-//     }
-// }
+#[must_use]
+#[derive(Clone, Serialize, Deserialize)]
+pub struct ValidJson<T: Clone, DP: Clone>(pub T, pub PhantomData<DP>);
 
 
-// #[async_trait]
-// impl<T, S, DP> FromRequest<S> for ValidQuery<T, DP>
-// where
-//     S: Send + Sync,
-//     T: Serialize + DeserializeOwned + DomainPrimitive<DP> + From<DP> + Clone, // 确保 T 可以解析
-//     DP: Clone + TryFrom<T> + Send + Sync + 'static,  // 确保 U 可以进行校验
-// {
-//     type Rejection = Res<String>;
+#[async_trait]
+impl<T, S, DP> FromRequest<S> for ValidJson<T, DP>
+where
+    T: Serialize + DeserializeOwned + DomainPrimitive<DP> + From<DP> + Clone + Send + Sync + 'static,
+    DP: Clone + TryFrom<T> + Send + Sync + 'static,
+    S: Send + Sync,
+{
+    type Rejection = Res<String>;
 
-//     async fn from_request(req: Request, state: &S) -> Result<Self, Self::Rejection> {
-//         // 1. 解析查询参数为 T
-//         let query_result = Query::<T>::from_request(req, state).await;
+    async fn from_request(req: Request, state: &S) -> Result<Self, Self::Rejection> {
 
-//         match query_result {
-//             Ok(Query(value)) => {
-//                 // 2. 进行校验并转换为 U
-//                 match DomainPrimitive::new(&value) {
-//                     Ok(domain_primitive) => Ok(ValidQuery(DP::into(domain_primitive), PhantomData)),  
-//                     Err(e) => Err(Res::err(e)),
-//                 }
-//             }
-//             Err(e) => Err(Res::err(format!("参数格式非法: {}", e.body_text()))),
-//         }
-//     }
-// }
+        let json_result = Json::<T>::from_request(req, state).await.map_err(|_| "解析失败".to_string());
+
+        match json_result {
+            Ok(Json(value)) => {
+                // 使用 DomainPrimitive::new(&value) 做校验
+                match DomainPrimitive::new(&value) {
+                    Ok(domain_primitive) => Ok(ValidJson(DP::into(domain_primitive), PhantomData)),
+                    Err(e) => Err(Res::err(e)),
+                }
+            }
+            Err(e) => Err(Res::err(format!("参数格式非法: {}", e))),
+        }
+    }
+}
+
+
+#[must_use]
+#[derive(Clone, Serialize, Deserialize)]
+pub struct ValidQuery<T: Clone, DP: Clone>(pub T, pub PhantomData<DP>);
+
+#[async_trait]
+impl<T, S, DP> FromRequest<S> for ValidQuery<T, DP>
+where
+    S: Send + Sync,
+    T: Serialize + DeserializeOwned + DomainPrimitive<DP> + From<DP> + Clone, // 确保 T 可以解析
+    DP: Clone + TryFrom<T> + Send + Sync + 'static,  // 确保 U 可以进行校验
+{
+    type Rejection = Res<String>;
+
+    async fn from_request(req: Request, state: &S) -> Result<Self, Self::Rejection> {
+        // 1. 解析查询参数为 T
+        let query_result = Query::<T>::from_request(req, state).await.map_err(|_| "解析失败".to_string());
+
+        match query_result {
+            Ok(Query(value)) => {
+                // 2. 进行校验并转换为 U
+                match DomainPrimitive::new(&value) {
+                    Ok(domain_primitive) => Ok(ValidQuery(DP::into(domain_primitive), PhantomData)),
+                    Err(e) => Err(Res::err(e)),
+                }
+            }
+            Err(e) => Err(Res::err(format!("参数格式非法: {}", e))),
+        }
+    }
+}
+
+pub struct MultipartFile {
+    pub filename: String,
+    pub content_type: Option<String>,
+    pub data: Vec<u8>,
+}
+
+
+
+
+#[derive(Clone, Serialize, Deserialize)]
+pub struct ValidFile<T, DP: Clone>(pub T, pub PhantomData<DP>);
+#[async_trait]
+impl<S, T, DP> FromRequest<S> for ValidFile<T, DP>
+where
+    T: Serialize + DeserializeOwned + MultipartDomainPrimitive<DP> + From<DP> + Clone,
+    DP: Serialize + DeserializeOwned + Clone + TryFrom<T> + Send + Sync + 'static,
+    S: Send + Sync,
+{
+    type Rejection = Res<String>;
+
+    async fn from_request(req: Request, state: &S) -> Result<Self, Self::Rejection> {
+        // 使用 Multipart 提取表单数据
+        let multipart_param = Multipart::from_request(req, state).await.map_err(|_| "解析失败".to_string());
+        match multipart_param {
+            Ok(mut multipart) => {
+                let mut form_data = HashMap::new();
+                let mut files = Vec::new();
+
+                // 遍历 form 字段
+                while let Some(field) = multipart.next_field().await.unwrap() {
+                    let name = field.name().unwrap_or("").to_string();
+                    let file_name = field.file_name().map(|f| f.to_string()); // 提前获取 filename
+                    let field_content_type = field.content_type().map(|ct| ct.to_string()); // 提前获取 Content-Type
+
+                    if file_name.is_none() && field_content_type.is_none() {
+                        // 处理文本字段
+                        let text = field.text().await.unwrap();
+                        form_data.insert(name, text);
+                    } else {
+                        // 处理文件
+                        let bytes = field.bytes().await.unwrap().to_vec(); // 读取数据
+                        files.push(MultipartFile {
+                            filename: file_name.unwrap_or_else(|| "".to_string()), // 使用提前获取的 filename
+                            content_type: field_content_type, // 使用提前获取的 content_type
+                            data: bytes,
+                        });
+                    }
+                }
+
+                // 解析表单字段
+                let form_data = serde_json::from_value::<T>(serde_json::to_value(&form_data).unwrap());
+                match form_data {
+                    Ok(t) => {
+                        match MultipartDomainPrimitive::new(&t, files) {
+                            Ok(domain_primitive) => Ok(ValidFile(DP::into(domain_primitive), PhantomData)),
+                            Err(e) => Err(Res::err(e))
+                        }
+                    },
+                    Err(e) => Err(Res::err(e.to_string()))
+                }
+
+
+            }
+            Err(e) => Err(Res::err(format!("参数格式非法: {}", e))),
+        }
+
+
+    }
+}
+
+
+#[derive(Clone, Serialize, Deserialize)]
+pub struct ValidForm<T, DP: Clone>(pub T, pub PhantomData<DP>);
+#[async_trait]
+impl<S, T, DP> FromRequest<S> for ValidForm<T, DP>
+where
+    T: Serialize + DeserializeOwned + DomainPrimitive<DP> + From<DP> + Clone,
+    DP: Clone + TryFrom<T> + Send + Sync + 'static,
+    S: Send + Sync,
+{
+    type Rejection = Res<String>;
+    async fn from_request(req: Request, state: &S) -> Result<Self, Self::Rejection> {
+        // 使用 Form 提取表单数据
+        let form = Form::<T>::from_request(req, state).await;
+        match form {
+            Ok(Form(value)) =>  {
+                match DomainPrimitive::new(&value) {
+                    Ok(domain_primitive) => Ok(ValidForm(DP::into(domain_primitive), PhantomData)),
+                    Err(e) => Err(Res::err(e)),
+                }
+            },
+            Err(e) => Err(Res::err(format!("参数格式非法: {}", e.body_text()))),
+        }
+    }
+}
+
 
 
 #[async_trait]

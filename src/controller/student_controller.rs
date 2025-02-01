@@ -10,7 +10,7 @@ use crate::domain::{
     primitives::dp::IdOper
 };
 
-use crate::dto::req::{PageReq, Valid};
+use crate::dto::req::{PageReq, Valid, ValidForm, ValidJson, ValidQuery};
 use crate::dto::res::{JsonRes, PageRes, Res};
 use crate::service::student_services::{
     create_student, 
@@ -22,35 +22,44 @@ use crate::service::student_services::{
 
 pub(crate) async fn get_student_handler(
     State(srb): State<Arc<AppState>>,
-    Valid(stu, ..): Valid<Student, IdOper>,
+    ValidQuery(stu, ..): ValidQuery<Student, IdOper>,
 ) -> impl IntoResponse {
     JsonRes(get_student(&srb.rbatis, stu.id.unwrap()).await)
 }
 
+
+pub(crate) async fn post_student_handler_form(
+    State(srb): State<Arc<AppState>>,
+    ValidForm(stu, ..): ValidForm<Student, IdOper>,
+) -> impl IntoResponse {
+    JsonRes(get_student(&srb.rbatis, stu.id.unwrap()).await)
+}
+
+
 pub(crate) async fn create_student_handler(
     State(srb): State<Arc<AppState>>,
-    Valid(student, ..): Valid<Student, StudentCreate>,
+    ValidJson(student, ..): ValidJson<Student, StudentCreate>,
 ) -> impl IntoResponse {
     JsonRes(create_student(&srb.rbatis, student).await)
 }
 
 pub(crate) async fn update_student_handler(
     State(srb): State<Arc<AppState>>,
-    Valid(student,..): Valid<Student, StudentUpdate>,
+    ValidJson(student,..): ValidJson<Student, StudentUpdate>,
 ) -> impl IntoResponse {
     JsonRes(update_student(&srb.rbatis, student).await)
 }
 
 pub async fn delete_student_handler(
     State(srb): State<Arc<AppState>>,
-    Valid(stu, ..): Valid<Student, IdOper>,
+    ValidQuery(stu, ..): ValidQuery<Student, IdOper>,
 ) -> impl IntoResponse {
     JsonRes(delete_student(&srb.rbatis, stu.id.unwrap()).await)
 }
 
 pub async fn list_students_handler(
     State(srb): State<Arc<AppState>>,
-    Valid(req, ..): Valid<PageReq<Student>, StudentQuery>,
+    ValidJson(req, ..): ValidJson<PageReq<Student>, StudentQuery>,
 ) -> impl IntoResponse {
     match list_students(&srb.rbatis, req).await {
         Ok(students) => Res::<PageRes<Student>>::of(students.into()),

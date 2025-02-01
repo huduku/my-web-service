@@ -1,7 +1,16 @@
+use crate::dto::req::MultipartFile;
 use serde::{Deserialize, Serialize};
 
-pub trait DomainPrimitive<DP> {
+pub trait DomainPrimitive<DP> 
+    where DP: Clone + Send + Sync 
+{
     fn new(value: &Self) -> Result<DP, String>;
+}
+
+pub trait MultipartDomainPrimitive<DP>: DomainPrimitive<DP>
+    where DP: Clone + Send + Sync
+{
+    fn new(value: &Self,  multipart_files: Vec<MultipartFile>) -> Result<DP, String>;
 }
 
 // impl<DP: Clone> DomainPrimitive<DP> for DP {
