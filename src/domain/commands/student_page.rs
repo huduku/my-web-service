@@ -1,9 +1,11 @@
 use serde::{Deserialize, Serialize};
 
-use crate::{domain::{models::student::Student, primitives::{
-    dp::{DomainPrimitive, PageNo, PageSize}, 
-    students::{ClassIdQuery, StuNoQuery, UserNameQuery}
-}}, dto::req::PageReq};
+use crate::{domain::{
+    po::student::Student, primitives::{
+        dp::{DomainPrimitive, PageNo, PageSize}, 
+        students::{ClassIdQuery, StuNoQuery, UserNameQuery}
+    }
+}, dto::req::PageReq};
 
 
 

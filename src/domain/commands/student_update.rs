@@ -1,7 +1,7 @@
 use serde::{Deserialize, Serialize};
 
 use crate::domain::{
-    models::student::Student, 
+    po::student::Student,
     primitives::{
         dp::{DomainPrimitive, Id}, 
         students::{Address, Age, ClassId, UserName}

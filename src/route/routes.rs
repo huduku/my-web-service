@@ -13,5 +13,6 @@ pub fn student_routes() -> Router<Arc<AppState>> {
             .post(student_controller::post_student_handler_form))
         .route("/students/create", post(student_controller::create_student_handler))
         .route("/students/update", post(student_controller::update_student_handler))
+        
         .route("/students/delete", get(student_controller::delete_student_handler))
 }

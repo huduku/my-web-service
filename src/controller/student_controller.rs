@@ -6,11 +6,11 @@ use crate::AppState;
 
 use crate::domain::{
     commands::{student_create::StudentCreate, student_page::StudentQuery, student_update::StudentUpdate},
-    models::student::Student, 
+    po::student::Student,
     primitives::dp::IdOper
 };
 
-use crate::dto::req::{PageReq, Valid, ValidForm, ValidJson, ValidQuery};
+use crate::dto::req::{PageReq, ValidForm, ValidJson, ValidQuery};
 use crate::dto::res::{JsonRes, PageRes, Res};
 use crate::service::student_services::{
     create_student, 

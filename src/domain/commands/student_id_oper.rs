@@ -1,5 +1,5 @@
 use crate::domain::{
-    models::student::Student, 
+    po::student::Student,
     primitives::dp::{DomainPrimitive, Id, IdOper}
 };
 

@@ -1,5 +1,5 @@
 
-use crate::domain::models::student::Student;
+use crate::domain::po::student::Student;
 use crate::dto::res::DbRes;
 use axum::extract::FromRef;
 
