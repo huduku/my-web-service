@@ -30,7 +30,8 @@ impl From<IdOper> for Student {
             name: None,
             age: None,
             class_id: None,
-            address: None
+            address: None,
+            created_at: None
         }
     }
 }

@@ -76,6 +76,7 @@ impl From<StudentQuery> for PageReq<Student> {
                 age: None,
                 class_id: value.class_id.0,
                 address: None,
+                created_at: None
             })
         }
     }

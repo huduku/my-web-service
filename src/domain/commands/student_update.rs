@@ -65,7 +65,8 @@ impl From<StudentUpdate> for Student {
             name: Some(value.name.0),
             age: Some(value.age.0),
             class_id: Some(value.class_id.0),
-            address: Some(value.address.0)
+            address: Some(value.address.0),
+            created_at: None
         }
     }
 }
