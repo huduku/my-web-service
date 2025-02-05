@@ -5,7 +5,7 @@ use axum::response::IntoResponse;
 use crate::AppState;
 
 use crate::domain::{
-    commands::student_cmd::{StudentCreate, StudentQuery, StudentUpdate},
+    cmds::student_cmd::{StudentCreate, StudentQuery, StudentUpdate},
     po::student::Student,
     primitives::dp::IdOper
 };
