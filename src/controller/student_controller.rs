@@ -7,7 +7,7 @@ use crate::AppState;
 use crate::domain::{
     cmds::student_cmd::{StudentCreate, StudentQuery, StudentUpdate},
     po::student::Student,
-    primitives::dp::IdOper
+    primitives::IdOper
 };
 
 use crate::dto::req::{PageReq, ValidForm, ValidJson, ValidQuery};
@@ -22,7 +22,7 @@ use crate::service::student_services::{
 
 pub(crate) async fn get_student_handler(
     State(srb): State<Arc<AppState>>,
-    ValidQuery(stu, ..): ValidQuery<Student, IdOper>,
+    ValidQuery(stu, ..): ValidQuery<Student, IdOper<i64>>,
 ) -> impl IntoResponse {
     JsonRes(get_student(&srb.rbatis, stu.id.unwrap()).await)
 }
@@ -30,7 +30,7 @@ pub(crate) async fn get_student_handler(
 
 pub(crate) async fn post_student_handler_form(
     State(srb): State<Arc<AppState>>,
-    ValidForm(stu, ..): ValidForm<Student, IdOper>,
+    ValidForm(stu, ..): ValidForm<Student, IdOper<i64>>,
 ) -> impl IntoResponse {
     JsonRes(get_student(&srb.rbatis, stu.id.unwrap()).await)
 }
@@ -52,7 +52,7 @@ pub(crate) async fn update_student_handler(
 
 pub async fn delete_student_handler(
     State(srb): State<Arc<AppState>>,
-    ValidQuery(stu, ..): ValidQuery<Student, IdOper>,
+    ValidQuery(stu, ..): ValidQuery<Student, IdOper<i64>>,
 ) -> impl IntoResponse {
     JsonRes(delete_student(&srb.rbatis, stu.id.unwrap()).await)
 }

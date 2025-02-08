@@ -1,6 +1,7 @@
 
 use serde::{Deserialize, Serialize};
 use unicode_segmentation::UnicodeSegmentation;
+use crate::domain::core::DomainPrimitive;
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct StuNo(pub String);
@@ -27,8 +28,10 @@ pub struct ClassIdQuery(pub Option<u32>);
 pub struct Address(pub String);
 
 
-impl StuNo {
-    pub fn new(value: Option<String>) -> Result<Self, String> {
+impl DomainPrimitive<String> for StuNo {
+
+    type Error = String;
+    fn new(value: Option<String>) -> Result<Self, String> {
         match value {
             Some(v) => {
                 if v.is_empty() {
@@ -47,8 +50,9 @@ impl StuNo {
     }
 }
 
-impl StuNoQuery {
-    pub fn new(value: Option<String>) -> Result<Self, String> {
+impl DomainPrimitive<String> for StuNoQuery {
+    type Error = String;
+    fn new(value: Option<String>) -> Result<Self, String> {
         match value {
             Some(v) => {
                 if v.is_empty() {
@@ -61,8 +65,14 @@ impl StuNoQuery {
     }
 }
 
-impl UserName {
-    pub fn new(value: Option<String>) -> Result<Self, String> {
+
+impl DomainPrimitive<String> for UserName {
+    type Error = String;
+
+    fn new(value: Option<String>) -> Result<Self, Self::Error>
+    where
+        Self: Sized
+    {
         match value {
             Some(v) => Ok(UserName(v)),
             None => Err("name 不能为空".to_string())
@@ -70,8 +80,9 @@ impl UserName {
     }
 }
 
-impl UserNameQuery {
-    pub fn new(value: Option<String>) -> Result<Self, String> {
+impl DomainPrimitive<String> for UserNameQuery {
+    type Error = String;
+    fn new(value: Option<String>) -> Result<Self, String> {
         match value {
             Some(v) => {
                 if v.is_empty() {
@@ -88,8 +99,9 @@ impl UserNameQuery {
 }
 
 
-impl Age {
-    pub fn new(value: Option<u16>) -> Result<Self, String> {
+impl DomainPrimitive<u16> for Age {
+    type Error = String;
+    fn new(value: Option<u16>) -> Result<Self, String> {
         match value {
             Some(v) => {
                 if v > 180 {
@@ -102,8 +114,9 @@ impl Age {
     }
 }
 
-impl ClassId {
-    pub fn new(value: Option<u32>) -> Result<Self, String> {
+impl DomainPrimitive<u32> for ClassId {
+    type Error = String;
+    fn new(value: Option<u32>) -> Result<Self, String> {
         match value {
             Some(v) => Ok(ClassId(v)),
             None => Err("class_id 不能为空".to_string())
@@ -112,8 +125,11 @@ impl ClassId {
 }
 
 
-impl ClassIdQuery {
-    pub fn new(value: Option<u32>) -> Result<Self, String> {
+impl DomainPrimitive<u32> for ClassIdQuery {
+
+    type Error = String;
+    
+    fn new(value: Option<u32>) -> Result<Self, String> {
         match value {
             Some(v) => Ok(ClassIdQuery(Some(v))),
             None => Ok(ClassIdQuery(None))
@@ -121,8 +137,10 @@ impl ClassIdQuery {
     }
 }
 
-impl Address {
-    pub fn new(value: Option<String>) -> Result<Self, String> {
+impl DomainPrimitive<String> for Address {
+
+    type Error = String;
+    fn new(value: Option<String>) -> Result<Self, String> {
         match value {
             Some(v) => Ok(Address(v)),
             None => Err("address 不能为空".to_string())
@@ -130,24 +148,3 @@ impl Address {
     }
 }
 
-
-
-// #[test]
-// fn test() {
-//     let stu = Student {
-//         id: Some(0),
-//         stu_no: Some("10247015".to_string()),
-//         name: Some("张三".to_string()),
-//         age: Some(180),
-//         class_id: Some(5),
-//         address:  Some("学号".to_string())
-//     };
-
-//     let stu = StudentCreate::try_from(stu);
-//     if stu.is_ok() {
-//         println!("ok: {}", serde_json::to_string(&stu.unwrap()).unwrap());
-//     } else {
-//         println!("err: {}", &stu.err().unwrap());
-//     }
-
-// }

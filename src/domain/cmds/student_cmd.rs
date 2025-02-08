@@ -3,11 +3,12 @@ use serde::{Deserialize, Serialize};
 use crate::domain::{
     po::student::Student,
     primitives::{
-        dp::{DomainPrimitive,Id, IdOper},
         students::{Address, Age, ClassId, StuNo, UserName}
     }
 };
-use crate::domain::primitives::dp::{PageNo, PageSize};
+
+use crate::domain::core::{DomainGuard, DomainPrimitive};
+use crate::domain::primitives::{PageNo, PageSize, Id, IdOper};
 use crate::domain::primitives::students::{ClassIdQuery, StuNoQuery, UserNameQuery};
 use crate::dto::req::PageReq;
 
@@ -24,13 +25,11 @@ unsafe impl Send for StudentCreate {}
 unsafe impl Sync for StudentCreate {}
 
 
-impl DomainPrimitive<StudentCreate> for Student {
+impl DomainGuard<StudentCreate> for Student {
     fn new(value: &Self) -> Result<StudentCreate, String> {
         StudentCreate::try_from(value.clone())
     }
 }
-
-
 
 impl TryFrom<Student> for StudentCreate {
     type Error = String;
@@ -69,14 +68,14 @@ impl From<StudentCreate> for Student {
 
 
 
-impl DomainPrimitive<IdOper> for Student {
-    fn new(value: &Self) -> Result<IdOper, String> {
-        IdOper::try_from(value.clone())
+impl DomainGuard<IdOper<i64>> for Student {
+    fn new(value: &Self) -> Result<IdOper<i64>, String> {
+        IdOper::<i64>::try_from(value.clone())
     }
 }
 
 
-impl TryFrom<Student> for IdOper {
+impl TryFrom<Student> for IdOper<i64> {
     type Error = String;
     fn try_from(value: Student) -> Result<Self, Self::Error> {
         let id = Id::new(value.id)?;
@@ -86,9 +85,9 @@ impl TryFrom<Student> for IdOper {
     }
 }
 
-impl From<IdOper> for Student {
+impl From<IdOper<i64>> for Student {
 
-    fn from(value: IdOper) -> Self {
+    fn from(value: IdOper<i64>) -> Self {
         Self {
             id: Some(value.id.0),
             stu_no: None,
@@ -116,7 +115,7 @@ pub struct StudentQuery {
 unsafe impl Send for StudentQuery {}
 unsafe impl Sync for StudentQuery {}
 
-impl DomainPrimitive<StudentQuery> for PageReq<Student> {
+impl DomainGuard<StudentQuery> for PageReq<Student> {
     fn new(value: &Self) -> Result<StudentQuery, String> {
         StudentQuery::try_from(value.clone())
     }
@@ -182,7 +181,7 @@ impl From<StudentQuery> for PageReq<Student> {
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct StudentUpdate {
-    pub id: Id,
+    pub id: Id<i64>,
     // pub stu_no: StuNo,
     pub name: UserName,
     pub age: Age,
@@ -194,7 +193,7 @@ unsafe impl Send for StudentUpdate {}
 unsafe impl Sync for StudentUpdate {}
 
 
-impl DomainPrimitive<StudentUpdate> for Student {
+impl DomainGuard<StudentUpdate> for Student {
     fn new(value: &Self) -> Result<StudentUpdate, String> {
         StudentUpdate::try_from(value.clone())
     }
@@ -207,6 +206,12 @@ impl TryFrom<Student> for StudentUpdate {
     type Error = String;
     fn try_from(value: Student) -> Result<Self, Self::Error> {
 
+        // let id = Id::new(value.id)?;
+        // let name =  UserName::new(value.name)?;
+        // let age =  Age::new(value.age)?;
+        // let class_id =  ClassId::new(value.class_id)?;
+        // let address = Address::new(value.address)?;
+        
         let id = Id::new(value.id)?;
         let name =  UserName::new(value.name)?;
         let age =  Age::new(value.age)?;

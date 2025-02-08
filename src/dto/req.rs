@@ -7,18 +7,18 @@ use axum::{async_trait, Form, Json};
 use rbatis::PageRequest;
 use serde::de::DeserializeOwned;
 use serde::{Deserialize, Serialize};
-use crate::domain::primitives::dp::{DomainPrimitive, MultipartDomainPrimitive};
+use crate::domain::core::{DomainGuard, MultipartDomainGuard};
 
 #[must_use]
 #[derive(Clone, Serialize, Deserialize)]
-pub struct ValidJson<T: Clone, DP: Clone>(pub T, pub PhantomData<DP>);
+pub struct ValidJson<T: Clone, DG: Clone>(pub T, pub PhantomData<DG>);
 
 
 #[async_trait]
-impl<T, S, DP> FromRequest<S> for ValidJson<T, DP>
+impl<T, S, DG> FromRequest<S> for ValidJson<T, DG>
 where
-    T: Serialize + DeserializeOwned + DomainPrimitive<DP> + From<DP> + Clone + Send + Sync + 'static,
-    DP: Clone + TryFrom<T> + Send + Sync + 'static,
+    T: Serialize + DeserializeOwned + DomainGuard<DG> + From<DG> + Clone + Send + Sync + 'static,
+    DG: Clone + TryFrom<T> + Send + Sync + 'static,
     S: Send + Sync,
 {
     type Rejection = Res<String>;
@@ -29,9 +29,9 @@ where
 
         match json_result {
             Ok(Json(value)) => {
-                // 使用 DomainPrimitive::new(&value) 做校验
-                match DomainPrimitive::new(&value) {
-                    Ok(domain_primitive) => Ok(ValidJson(DP::into(domain_primitive), PhantomData)),
+                // 使用 DomainGuard::new(&value) 做校验
+                match DomainGuard::new(&value) {
+                    Ok(domain_primitive) => Ok(ValidJson(DG::into(domain_primitive), PhantomData)),
                     Err(e) => Err(Res::err(e)),
                 }
             }
@@ -43,14 +43,14 @@ where
 
 #[must_use]
 #[derive(Clone, Serialize, Deserialize)]
-pub struct ValidQuery<T: Clone, DP: Clone>(pub T, pub PhantomData<DP>);
+pub struct ValidQuery<T: Clone, DG: Clone>(pub T, pub PhantomData<DG>);
 
 #[async_trait]
-impl<T, S, DP> FromRequest<S> for ValidQuery<T, DP>
+impl<T, S, DG> FromRequest<S> for ValidQuery<T, DG>
 where
     S: Send + Sync,
-    T: Serialize + DeserializeOwned + DomainPrimitive<DP> + From<DP> + Clone, // 确保 T 可以解析
-    DP: Clone + TryFrom<T> + Send + Sync + 'static,  // 确保 U 可以进行校验
+    T: Serialize + DeserializeOwned + DomainGuard<DG> + From<DG> + Clone, // 确保 T 可以解析
+    DG: Clone + TryFrom<T> + Send + Sync + 'static,  // 确保 U 可以进行校验
 {
     type Rejection = Res<String>;
 
@@ -61,8 +61,8 @@ where
         match query_result {
             Ok(Query(value)) => {
                 // 2. 进行校验并转换为 U
-                match DomainPrimitive::new(&value) {
-                    Ok(domain_primitive) => Ok(ValidQuery(DP::into(domain_primitive), PhantomData)),
+                match DomainGuard::new(&value) {
+                    Ok(domain_primitive) => Ok(ValidQuery(DG::into(domain_primitive), PhantomData)),
                     Err(e) => Err(Res::err(e)),
                 }
             }
@@ -81,11 +81,11 @@ pub struct MultipartFile {
 
 
 #[derive(Clone, Serialize, Deserialize)]
-pub struct ValidFile<T, DP: Clone>(pub T, pub PhantomData<DP>);
+pub struct ValidFile<T, DG: Clone>(pub T, pub PhantomData<DG>);
 #[async_trait]
 impl<S, T, DP> FromRequest<S> for ValidFile<T, DP>
 where
-    T: Serialize + DeserializeOwned + MultipartDomainPrimitive<DP> + From<DP> + Clone,
+    T: Serialize + DeserializeOwned + MultipartDomainGuard<DP> + From<DP> + Clone,
     DP: Serialize + DeserializeOwned + Clone + TryFrom<T> + Send + Sync + 'static,
     S: Send + Sync,
 {
@@ -124,7 +124,7 @@ where
                 let form_data = serde_json::from_value::<T>(serde_json::to_value(&form_data).unwrap());
                 match form_data {
                     Ok(t) => {
-                        match MultipartDomainPrimitive::new(&t, files) {
+                        match MultipartDomainGuard::new(&t, files) {
                             Ok(domain_primitive) => Ok(ValidFile(DP::into(domain_primitive), PhantomData)),
                             Err(e) => Err(Res::err(e))
                         }
@@ -143,12 +143,12 @@ where
 
 
 #[derive(Clone, Serialize, Deserialize)]
-pub struct ValidForm<T, DP: Clone>(pub T, pub PhantomData<DP>);
+pub struct ValidForm<T, DG: Clone>(pub T, pub PhantomData<DG>);
 #[async_trait]
-impl<S, T, DP> FromRequest<S> for ValidForm<T, DP>
+impl<S, T, DG> FromRequest<S> for ValidForm<T, DG>
 where
-    T: Serialize + DeserializeOwned + DomainPrimitive<DP> + From<DP> + Clone,
-    DP: Clone + TryFrom<T> + Send + Sync + 'static,
+    T: Serialize + DeserializeOwned + DomainGuard<DG> + From<DG> + Clone,
+    DG: Clone + TryFrom<T> + Send + Sync + 'static,
     S: Send + Sync,
 {
     type Rejection = Res<String>;
@@ -157,8 +157,8 @@ where
         let form = Form::<T>::from_request(req, state).await;
         match form {
             Ok(Form(value)) =>  {
-                match DomainPrimitive::new(&value) {
-                    Ok(domain_primitive) => Ok(ValidForm(DP::into(domain_primitive), PhantomData)),
+                match DomainGuard::new(&value) {
+                    Ok(domain_primitive) => Ok(ValidForm(DG::into(domain_primitive), PhantomData)),
                     Err(e) => Err(Res::err(e)),
                 }
             },
@@ -211,21 +211,21 @@ where
 
 #[must_use]
 #[derive(Clone, Serialize, Deserialize)]
-pub struct Valid<T: Clone, DP: Clone>(pub T, pub PhantomData<DP>);
+pub struct Valid<T: Clone, DG: Clone>(pub T, pub PhantomData<DG>);
 
 #[async_trait]
-impl<T, S, DP> FromRequest<S> for Valid<T, DP>
+impl<T, S, DG> FromRequest<S> for Valid<T, DG>
 where
     S: Send + Sync,
-    T: Serialize + DeserializeOwned + DomainPrimitive<DP> + From<DP> + Clone,
-    DP: Clone + TryFrom<T> + Send + Sync + 'static,
+    T: Serialize + DeserializeOwned + DomainGuard<DG> + From<DG> + Clone,
+    DG: Clone + TryFrom<T> + Send + Sync + 'static,
 {
     type Rejection = Res<String>;
 
     async fn from_request(req: Request, state: &S) -> Result<Self, Self::Rejection> {
         let value: T = UnifiedExtractor::extract(req, state).await?;
-        match DomainPrimitive::new(&value) {
-            Ok(domain_primitive) => Ok(Valid(DP::into(domain_primitive), PhantomData)),
+        match DomainGuard::new(&value) {
+            Ok(domain_primitive) => Ok(Valid(DG::into(domain_primitive), PhantomData)),
             Err(e) => Err(Res::err(e)),
         }
     }
