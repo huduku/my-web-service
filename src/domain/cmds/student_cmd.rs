@@ -24,10 +24,9 @@ pub struct StudentCreate {
 unsafe impl Send for StudentCreate {}
 unsafe impl Sync for StudentCreate {}
 
-
 impl DomainGuard<StudentCreate> for Student {
-    fn new(value: &Self) -> Result<StudentCreate, String> {
-        StudentCreate::try_from(value.clone())
+    fn new(value: Self) -> Result<StudentCreate, String> {
+        StudentCreate::try_from(value)
     }
 }
 
@@ -69,8 +68,8 @@ impl From<StudentCreate> for Student {
 
 
 impl DomainGuard<IdOper<i64>> for Student {
-    fn new(value: &Self) -> Result<IdOper<i64>, String> {
-        IdOper::<i64>::try_from(value.clone())
+    fn new(value: Self) -> Result<IdOper<i64>, String> {
+        IdOper::<i64>::try_from(value)
     }
 }
 
@@ -116,8 +115,8 @@ unsafe impl Send for StudentQuery {}
 unsafe impl Sync for StudentQuery {}
 
 impl DomainGuard<StudentQuery> for PageReq<Student> {
-    fn new(value: &Self) -> Result<StudentQuery, String> {
-        StudentQuery::try_from(value.clone())
+    fn new(value: Self) -> Result<StudentQuery, String> {
+        StudentQuery::try_from(value)
     }
 }
 
@@ -194,7 +193,7 @@ unsafe impl Sync for StudentUpdate {}
 
 
 impl DomainGuard<StudentUpdate> for Student {
-    fn new(value: &Self) -> Result<StudentUpdate, String> {
+    fn new(value: Self) -> Result<StudentUpdate, String> {
         StudentUpdate::try_from(value.clone())
     }
 }

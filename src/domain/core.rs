@@ -12,15 +12,25 @@ pub trait DomainPrimitive<T>
 pub trait DomainGuard<DG>
 where DG: Clone + Send + Sync
 {
-    fn new(value: &Self) -> Result<DG, String>;
+    fn new(value: Self) -> Result<DG, String>;
 }
 
 pub trait MultipartDomainGuard<DG>: DomainGuard<DG>
 where DG: Clone + Send + Sync
 {
-    fn new(value: &Self,  multipart_files: Vec<MultipartFile>) -> Result<DG, String>;
+    fn new(value: Self,  multipart_files: Vec<MultipartFile>) -> Result<DG, String>;
 }
 
-pub trait DomainEntity<E> : DomainGuard<E> where E: Clone + Send + Sync {
+pub trait DomainModel<M> : DomainGuard<M> where M: Clone + Send + Sync {}
+
+pub trait DomainEntity<E> : DomainModel<E> where E: Clone + Send + Sync {
+    type ID;
+}
     
+pub trait DomainValueObject<V> : DomainModel<V> where V: Clone + Send + Sync {
+    
+}
+
+pub trait DomainAggregateRoot<A> : DomainModel<A> where A: Clone + Send + Sync {
+    type ID;
 }

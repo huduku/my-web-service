@@ -30,7 +30,7 @@ where
         match json_result {
             Ok(Json(value)) => {
                 // 使用 DomainGuard::new(&value) 做校验
-                match DomainGuard::new(&value) {
+                match DomainGuard::new(value) {
                     Ok(domain_primitive) => Ok(ValidJson(DG::into(domain_primitive), PhantomData)),
                     Err(e) => Err(Res::err(e)),
                 }
@@ -61,7 +61,7 @@ where
         match query_result {
             Ok(Query(value)) => {
                 // 2. 进行校验并转换为 U
-                match DomainGuard::new(&value) {
+                match DomainGuard::new(value) {
                     Ok(domain_primitive) => Ok(ValidQuery(DG::into(domain_primitive), PhantomData)),
                     Err(e) => Err(Res::err(e)),
                 }
@@ -96,7 +96,7 @@ where
         let multipart_param = Multipart::from_request(req, state).await.map_err(|_| "解析失败".to_string());
         match multipart_param {
             Ok(mut multipart) => {
-                let mut form_data = HashMap::new();
+                let mut forms = HashMap::new();
                 let mut files = Vec::new();
 
                 // 遍历 form 字段
@@ -108,7 +108,7 @@ where
                     if file_name.is_none() && field_content_type.is_none() {
                         // 处理文本字段
                         let text = field.text().await.unwrap();
-                        form_data.insert(name, text);
+                        forms.insert(name, text);
                     } else {
                         // 处理文件
                         let bytes = field.bytes().await.unwrap().to_vec(); // 读取数据
@@ -121,10 +121,10 @@ where
                 }
 
                 // 解析表单字段
-                let form_data = serde_json::from_value::<T>(serde_json::to_value(&form_data).unwrap());
-                match form_data {
-                    Ok(t) => {
-                        match MultipartDomainGuard::new(&t, files) {
+                let forms = serde_json::from_value::<T>(serde_json::to_value(&forms).unwrap());
+                match forms {
+                    Ok(fields) => {
+                        match MultipartDomainGuard::new(fields, files) {
                             Ok(domain_primitive) => Ok(ValidFile(DP::into(domain_primitive), PhantomData)),
                             Err(e) => Err(Res::err(e))
                         }
@@ -157,7 +157,7 @@ where
         let form = Form::<T>::from_request(req, state).await;
         match form {
             Ok(Form(value)) =>  {
-                match DomainGuard::new(&value) {
+                match DomainGuard::new(value) {
                     Ok(domain_primitive) => Ok(ValidForm(DG::into(domain_primitive), PhantomData)),
                     Err(e) => Err(Res::err(e)),
                 }
@@ -224,7 +224,7 @@ where
 
     async fn from_request(req: Request, state: &S) -> Result<Self, Self::Rejection> {
         let value: T = UnifiedExtractor::extract(req, state).await?;
-        match DomainGuard::new(&value) {
+        match DomainGuard::new(value) {
             Ok(domain_primitive) => Ok(Valid(DG::into(domain_primitive), PhantomData)),
             Err(e) => Err(Res::err(e)),
         }
