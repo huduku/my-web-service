@@ -4,9 +4,9 @@ use serde::de::DeserializeOwned;
 use serde::{Deserialize, Serialize};
 use std::fmt::{Display, Formatter};
 
-const SUCCESS: &'static str = "10000";
+const SUCCESS: &str = "10000";
 
-const ERROR: &'static str = "99999";
+const ERROR: &str = "99999";
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct Res<T> {

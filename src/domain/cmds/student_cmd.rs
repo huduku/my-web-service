@@ -25,7 +25,7 @@ unsafe impl Send for StudentCreate {}
 unsafe impl Sync for StudentCreate {}
 
 impl DomainModel<StudentCreate> for Student {
-    fn new(value: Self) -> Result<StudentCreate, String> {
+    fn of(value: Self) -> Result<StudentCreate, String> {
         StudentCreate::try_from(value)
     }
 }
@@ -68,7 +68,7 @@ impl From<StudentCreate> for Student {
 
 
 impl DomainModel<IdOper<i64>> for Student {
-    fn new(value: Self) -> Result<IdOper<i64>, String> {
+    fn of(value: Self) -> Result<IdOper<i64>, String> {
         IdOper::<i64>::try_from(value)
     }
 }
@@ -115,7 +115,7 @@ unsafe impl Send for StudentQuery {}
 unsafe impl Sync for StudentQuery {}
 
 impl DomainModel<StudentQuery> for PageReq<Student> {
-    fn new(value: Self) -> Result<StudentQuery, String> {
+    fn of(value: Self) -> Result<StudentQuery, String> {
         StudentQuery::try_from(value)
     }
 }
@@ -193,7 +193,7 @@ unsafe impl Sync for StudentUpdate {}
 
 
 impl DomainModel<StudentUpdate> for Student {
-    fn new(value: Self) -> Result<StudentUpdate, String> {
+    fn of(value: Self) -> Result<StudentUpdate, String> {
         StudentUpdate::try_from(value.clone())
     }
 }

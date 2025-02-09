@@ -30,7 +30,7 @@ where
         match json_result {
             Ok(Json(value)) => {
                 // 使用 DomainGuard::new(&value) 做校验
-                match DomainModel::new(value) {
+                match DomainModel::of(value) {
                     Ok(domain_primitive) => Ok(ValidJson(DM::into(domain_primitive), PhantomData)),
                     Err(e) => Err(Res::err(e)),
                 }
@@ -61,7 +61,7 @@ where
         match query_result {
             Ok(Query(value)) => {
                 // 2. 进行校验并转换为 U
-                match DomainModel::new(value) {
+                match DomainModel::of(value) {
                     Ok(domain_primitive) => Ok(ValidQuery(DM::into(domain_primitive), PhantomData)),
                     Err(e) => Err(Res::err(e)),
                 }
@@ -124,7 +124,7 @@ where
                 let forms = serde_json::from_value::<T>(serde_json::to_value(&forms).unwrap());
                 match forms {
                     Ok(fields) => {
-                        match MultipartDomainModel::new(fields, files) {
+                        match MultipartDomainModel::of(fields, files) {
                             Ok(domain_primitive) => Ok(ValidFile(DP::into(domain_primitive), PhantomData)),
                             Err(e) => Err(Res::err(e))
                         }
@@ -157,7 +157,7 @@ where
         let form = Form::<T>::from_request(req, state).await;
         match form {
             Ok(Form(value)) =>  {
-                match DomainModel::new(value) {
+                match DomainModel::of(value) {
                     Ok(domain_primitive) => Ok(ValidForm(DM::into(domain_primitive), PhantomData)),
                     Err(e) => Err(Res::err(e)),
                 }

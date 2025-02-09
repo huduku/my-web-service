@@ -12,12 +12,12 @@ pub trait DomainPrimitive<T>
 pub trait DomainModel<DM>
     where DM: Clone + Send + Sync
 {
-    fn new(value: Self) -> Result<DM, String>;
+    fn of(value: Self) -> Result<DM, String>;
 }
 
 pub trait MultipartDomainModel<DM>: DomainModel<DM>
 where DM: Clone + Send + Sync
 {
-    fn new(value: Self,  multipart_files: Vec<MultipartFile>) -> Result<DM, String>;
+    fn of(value: Self, multipart_files: Vec<MultipartFile>) -> Result<DM, String>;
 }
 

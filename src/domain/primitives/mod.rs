@@ -17,7 +17,7 @@ impl DomainPrimitive<i64> for Id<i64> {
                 if v <= 0 {
                     return Err("id 参数非法".to_string());
                 }
-                return Ok(Id(v));
+                Ok(Id(v))
             },
             None => Err("id 不能为空".to_string())
         }

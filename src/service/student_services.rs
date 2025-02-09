@@ -38,6 +38,6 @@ pub async fn list_students(rb: &RBatis, stu_page_req: PageReq<Student>,)
     -> Result<Page<Student>, String> {
     let page = PageRequest::from_ref(&stu_page_req);
     let stu = &stu_page_req.req;
-    let DbRes(res) = Student::select_page(rb, &page, &stu).await.into();
+    let DbRes(res) = Student::select_page(rb, &page, stu).await.into();
     res
 }
