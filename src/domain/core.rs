@@ -9,28 +9,15 @@ pub trait DomainPrimitive<T>
     fn new(value: Option<T>) -> Result<Self, Self::Error> where Self: Sized;
 }
 
-pub trait DomainGuard<DG>
-where DG: Clone + Send + Sync
+pub trait DomainModel<DM>
+    where DM: Clone + Send + Sync
 {
-    fn new(value: Self) -> Result<DG, String>;
+    fn new(value: Self) -> Result<DM, String>;
 }
 
-pub trait MultipartDomainGuard<DG>: DomainGuard<DG>
-where DG: Clone + Send + Sync
+pub trait MultipartDomainModel<DM>: DomainModel<DM>
+where DM: Clone + Send + Sync
 {
-    fn new(value: Self,  multipart_files: Vec<MultipartFile>) -> Result<DG, String>;
+    fn new(value: Self,  multipart_files: Vec<MultipartFile>) -> Result<DM, String>;
 }
 
-pub trait DomainModel<M> : DomainGuard<M> where M: Clone + Send + Sync {}
-
-pub trait DomainEntity<E> : DomainModel<E> where E: Clone + Send + Sync {
-    type ID;
-}
-    
-pub trait DomainValueObject<V> : DomainModel<V> where V: Clone + Send + Sync {
-    
-}
-
-pub trait DomainAggregateRoot<A> : DomainModel<A> where A: Clone + Send + Sync {
-    type ID;
-}
