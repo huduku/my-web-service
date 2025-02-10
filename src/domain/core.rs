@@ -9,13 +9,6 @@ pub trait DomainPrimitive<T>
     fn new(value: Option<T>) -> Result<Self, Self::Error> where Self: Sized;
 }
 
-// pub trait DomainModel<DM>
-//     where DM: Clone + Send + Sync
-// {
-//     fn of(value: Self) -> Result<DM, String>;
-// }
-
-
 pub trait DomainModel : Sized{
     type CQE : Clone + Send + Sync ;
     fn new(value: &Self::CQE) -> Result<Self, String>;
