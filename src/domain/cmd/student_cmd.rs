@@ -1,16 +1,12 @@
 use serde::{Deserialize, Serialize};
 
-use crate::domain::{
-    po::student::Student,
-    primitives::{
-        students::{Address, Age, ClassId, StuNo, UserName}
-    }
-};
+use crate::domain::primitive::students::{Address, Age, ClassId, StuNo, UserName};
 
-use crate::domain::core::{DomainModel, DomainPrimitive};
-use crate::domain::primitives::{PageNo, PageSize, Id, IdOper};
-use crate::domain::primitives::students::{ClassIdQuery, StuNoQuery, UserNameQuery};
-use crate::dto::req::PageReq;
+use crate::domain::core::{DomainModel, DomainPrimitive, PageQuery};
+use crate::domain::core::{Id, IdOper, PageNo, PageSize};
+use crate::domain::primitive::students::{ClassIdQuery, StuNoQuery, UserNameQuery};
+use crate::app::dto::req::PageReq;
+use crate::infra::po::student::StudentPO;
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct StudentCreate {
@@ -25,15 +21,15 @@ unsafe impl Send for StudentCreate {}
 unsafe impl Sync for StudentCreate {}
 
 impl DomainModel for StudentCreate {
-    type CQE = Student;
-    fn new(value: &Self::CQE) -> Result<Self, String> {
+    type CQES = StudentPO;
+    fn new(value: &Self::CQES) -> Result<Self, String> {
         StudentCreate::try_from(value.to_owned())
     }
 }
 
-impl TryFrom<Student> for StudentCreate {
+impl TryFrom<StudentPO> for StudentCreate {
     type Error = String;
-    fn try_from(value: Student) -> Result<Self, Self::Error> {
+    fn try_from(value: StudentPO) -> Result<Self, Self::Error> {
 
         let stu_no = StuNo::new(value.stu_no)?;
         let name =  UserName::new(value.name)?;
@@ -51,7 +47,7 @@ impl TryFrom<Student> for StudentCreate {
     }
 }
 
-impl From<StudentCreate> for Student {
+impl From<StudentCreate> for StudentPO {
 
     fn from(value: StudentCreate) -> Self {
         Self {
@@ -70,16 +66,16 @@ impl From<StudentCreate> for Student {
 
 impl DomainModel for IdOper<i64> {
 
-    type CQE = Student;
-    fn new(value: &Self::CQE) -> Result<IdOper<i64>, String> {
+    type CQES = StudentPO;
+    fn new(value: &Self::CQES) -> Result<IdOper<i64>, String> {
         IdOper::<i64>::try_from(value.to_owned())
     }
 }
 
 
-impl TryFrom<Student> for IdOper<i64> {
+impl TryFrom<StudentPO> for IdOper<i64> {
     type Error = String;
-    fn try_from(value: Student) -> Result<Self, Self::Error> {
+    fn try_from(value: StudentPO) -> Result<Self, Self::Error> {
         let id = Id::new(value.id)?;
         Ok(IdOper {
             id
@@ -87,7 +83,7 @@ impl TryFrom<Student> for IdOper<i64> {
     }
 }
 
-impl From<IdOper<i64>> for Student {
+impl From<IdOper<i64>> for StudentPO {
 
     fn from(value: IdOper<i64>) -> Self {
         Self {
@@ -118,16 +114,16 @@ unsafe impl Send for StudentQuery {}
 unsafe impl Sync for StudentQuery {}
 
 impl DomainModel for StudentQuery {
-    type CQE = PageReq<Student>;
-    fn new(value: &Self::CQE) -> Result<StudentQuery, String> {
+    type CQES = PageReq<StudentPO>;
+    fn new(value: &Self::CQES) -> Result<StudentQuery, String> {
         StudentQuery::try_from(value.to_owned())
     }
 }
 
 
-impl TryFrom<PageReq<Student>> for StudentQuery {
+impl TryFrom<PageReq<StudentPO>> for StudentQuery {
     type Error = String;
-    fn try_from(value: PageReq<Student>) -> Result<Self, Self::Error> {
+    fn try_from(value: PageReq<StudentPO>) -> Result<Self, Self::Error> {
 
         let page_no = PageNo::new(value.page_no)?;
         let page_size=  PageSize::new(value.page_size)?;
@@ -160,13 +156,13 @@ impl TryFrom<PageReq<Student>> for StudentQuery {
     }
 }
 
-impl From<StudentQuery> for PageReq<Student> {
+impl From<StudentQuery> for PageReq<StudentPO> {
 
     fn from(value: StudentQuery) -> Self {
         Self {
             page_no: Some(value.page_no.0),
             page_size: Some(value.page_size.0),
-            req: Some(Student {
+            req: Some(StudentPO {
                 id: None,
                 stu_no: value.stu_no.0,
                 name: value.name.0,
@@ -198,8 +194,8 @@ unsafe impl Sync for StudentUpdate {}
 
 impl DomainModel for StudentUpdate {
 
-    type CQE = Student;
-    fn new(value: &Self::CQE) -> Result<StudentUpdate, String> {
+    type CQES = StudentPO;
+    fn new(value: &Self::CQES) -> Result<StudentUpdate, String> {
         StudentUpdate::try_from(value.clone())
     }
 }
@@ -207,9 +203,9 @@ impl DomainModel for StudentUpdate {
 
 
 
-impl TryFrom<Student> for StudentUpdate {
+impl TryFrom<StudentPO> for StudentUpdate {
     type Error = String;
-    fn try_from(value: Student) -> Result<Self, Self::Error> {
+    fn try_from(value: StudentPO) -> Result<Self, Self::Error> {
 
         // let id = Id::new(value.id)?;
         // let name =  UserName::new(value.name)?;
@@ -234,7 +230,7 @@ impl TryFrom<Student> for StudentUpdate {
 }
 
 
-impl From<StudentUpdate> for Student {
+impl From<StudentUpdate> for StudentPO {
 
     fn from(value: StudentUpdate) -> Self {
         Self {
@@ -245,5 +241,24 @@ impl From<StudentUpdate> for Student {
             class_id: Some(value.class_id.0),
             address: Some(value.address.0),
         }
+    }
+}
+
+
+impl DomainModel for PageQuery<StudentQuery> {
+
+    type CQES = PageReq<StudentPO>;
+    
+    fn new(value: &Self::CQES) -> Result<Self, String> {
+        PageQuery::<StudentQuery>::try_from(value.to_owned())
+    }
+    
+}
+
+impl TryFrom<PageReq<StudentPO>> for PageQuery<StudentQuery> {
+    type Error = String;
+
+    fn try_from(value: PageReq<StudentPO>) -> Result<Self, Self::Error> {
+        todo!()
     }
 }

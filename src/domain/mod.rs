@@ -1,7 +1,8 @@
-
-pub mod po;
-pub mod primitives;
-pub mod cmds;
+pub mod primitive;
+pub mod cmd;
 pub mod core;
-pub mod repository;
+pub mod repo;
 pub mod service;
+pub mod entity;
+
+

@@ -1,20 +1,17 @@
 use rbatis::RBatis;
 
-pub mod db;
-
 pub mod domain;
 
 pub mod route;
 
-pub mod dto;
-
 pub mod service;
 
-pub mod controller;
+pub mod web;
 
 pub mod infra;
 
 pub mod app;
+pub mod context;
 
 pub struct AppState {
     pub rbatis: RBatis,
