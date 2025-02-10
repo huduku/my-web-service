@@ -1,5 +1,4 @@
 use std::collections::HashMap;
-use std::marker::PhantomData;
 
 use crate::dto::res::Res;
 use axum::extract::{FromRef, FromRequest, Multipart, Query, Request};
@@ -9,17 +8,17 @@ use serde::de::DeserializeOwned;
 use serde::{Deserialize, Serialize};
 use crate::domain::core::{DomainModel, MultipartDomainModel};
 
+
 #[must_use]
 #[derive(Clone, Serialize, Deserialize)]
-pub struct ValidJson<T: Clone, DM: Clone>(pub T, pub PhantomData<DM>);
-
+pub struct ValidJson<T: Clone, DM: Clone + DomainModel<CQE=T>>(pub T, pub DM);
 
 #[async_trait]
 impl<T, S, DM> FromRequest<S> for ValidJson<T, DM>
 where
-    T: Serialize + DeserializeOwned + DomainModel<DM> + From<DM> + Clone + Send + Sync + 'static,
-    DM: Clone + TryFrom<T> + Send + Sync + 'static,
     S: Send + Sync,
+    T: Serialize + DeserializeOwned + Clone + Send + Sync + From<DM> + 'static, // 确保 T 可以解析
+    DM: Clone + Send + Sync + DomainModel<CQE=T> + TryFrom<T> +  'static,  // 确保 U 可以进行校验
 {
     type Rejection = Res<String>;
 
@@ -30,8 +29,8 @@ where
         match json_result {
             Ok(Json(value)) => {
                 // 使用 DomainGuard::new(&value) 做校验
-                match DomainModel::of(value) {
-                    Ok(domain_primitive) => Ok(ValidJson(DM::into(domain_primitive), PhantomData)),
+                match DM::new(&value) {
+                    Ok(dm) => Ok(ValidJson(value, dm)),
                     Err(e) => Err(Res::err(e)),
                 }
             }
@@ -41,16 +40,17 @@ where
 }
 
 
+
 #[must_use]
 #[derive(Clone, Serialize, Deserialize)]
-pub struct ValidQuery<T: Clone, DG: Clone>(pub T, pub PhantomData<DG>);
+pub struct ValidQuery<T: Clone, DM: Clone + DomainModel<CQE=T>>(pub T, pub DM);
 
 #[async_trait]
 impl<T, S, DM> FromRequest<S> for ValidQuery<T, DM>
 where
     S: Send + Sync,
-    T: Serialize + DeserializeOwned + DomainModel<DM> + From<DM> + Clone, // 确保 T 可以解析
-    DM: Clone + TryFrom<T> + Send + Sync + 'static,  // 确保 U 可以进行校验
+    T: Serialize + DeserializeOwned + Clone + Send + Sync + From<DM> + 'static, // 确保 T 可以解析
+    DM: Clone + Send + Sync + DomainModel<CQE=T> + TryFrom<T> +  'static,  // 确保 U 可以进行校验
 {
     type Rejection = Res<String>;
 
@@ -61,8 +61,8 @@ where
         match query_result {
             Ok(Query(value)) => {
                 // 2. 进行校验并转换为 U
-                match DomainModel::of(value) {
-                    Ok(domain_primitive) => Ok(ValidQuery(DM::into(domain_primitive), PhantomData)),
+                match DomainModel::new(&value) {
+                    Ok(dm) => Ok(ValidQuery(value, dm)),
                     Err(e) => Err(Res::err(e)),
                 }
             }
@@ -81,13 +81,13 @@ pub struct MultipartFile {
 
 
 #[derive(Clone, Serialize, Deserialize)]
-pub struct ValidFile<T, DM: Clone>(pub T, pub PhantomData<DM>);
+pub struct ValidFile<T, DM: Clone + DomainModel<CQE=T>>(pub T, pub DM);
 #[async_trait]
-impl<S, T, DP> FromRequest<S> for ValidFile<T, DP>
+impl<S, T, DM> FromRequest<S> for ValidFile<T, DM>
 where
-    T: Serialize + DeserializeOwned + MultipartDomainModel<DP> + From<DP> + Clone,
-    DP: Serialize + DeserializeOwned + Clone + TryFrom<T> + Send + Sync + 'static,
     S: Send + Sync,
+    T: Serialize + DeserializeOwned + Clone + Send + Sync + From<DM> + 'static, // 确保 T 可以解析
+    DM: Clone + Send + Sync + MultipartDomainModel<CQE=T> + TryFrom<T> +  'static,  // 确保 U 可以进行校验
 {
     type Rejection = Res<String>;
 
@@ -124,8 +124,8 @@ where
                 let forms = serde_json::from_value::<T>(serde_json::to_value(&forms).unwrap());
                 match forms {
                     Ok(fields) => {
-                        match MultipartDomainModel::of(fields, files) {
-                            Ok(domain_primitive) => Ok(ValidFile(DP::into(domain_primitive), PhantomData)),
+                        match MultipartDomainModel::new(&fields, files) {
+                            Ok(dm) => Ok(ValidFile(fields, dm)),
                             Err(e) => Err(Res::err(e))
                         }
                     },
@@ -143,12 +143,12 @@ where
 
 
 #[derive(Clone, Serialize, Deserialize)]
-pub struct ValidForm<T, DM: Clone>(pub T, pub PhantomData<DM>);
+pub struct ValidForm<T, DM: Clone + DomainModel<CQE=T>>(pub T, pub DM);
 #[async_trait]
 impl<S, T, DM> FromRequest<S> for ValidForm<T, DM>
 where
-    T: Serialize + DeserializeOwned + DomainModel<DM> + From<DM> + Clone,
-    DM: Clone + TryFrom<T> + Send + Sync + 'static,
+    T: Serialize + DeserializeOwned + From<DM> + Clone,
+    DM: DomainModel<CQE=T> + Clone + TryFrom<T> + Send + Sync + 'static,
     S: Send + Sync,
 {
     type Rejection = Res<String>;
@@ -157,8 +157,8 @@ where
         let form = Form::<T>::from_request(req, state).await;
         match form {
             Ok(Form(value)) =>  {
-                match DomainModel::of(value) {
-                    Ok(domain_primitive) => Ok(ValidForm(DM::into(domain_primitive), PhantomData)),
+                match DomainModel:: new(&value) {
+                    Ok(dm) => Ok(ValidForm(value, dm)),
                     Err(e) => Err(Res::err(e)),
                 }
             },

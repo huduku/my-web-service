@@ -9,15 +9,20 @@ pub trait DomainPrimitive<T>
     fn new(value: Option<T>) -> Result<Self, Self::Error> where Self: Sized;
 }
 
-pub trait DomainModel<DM>
-    where DM: Clone + Send + Sync
-{
-    fn of(value: Self) -> Result<DM, String>;
+// pub trait DomainModel<DM>
+//     where DM: Clone + Send + Sync
+// {
+//     fn of(value: Self) -> Result<DM, String>;
+// }
+
+
+pub trait DomainModel : Sized{
+    type CQE : Clone + Send + Sync ;
+    fn new(value: &Self::CQE) -> Result<Self, String>;
 }
 
-pub trait MultipartDomainModel<DM>: DomainModel<DM>
-where DM: Clone + Send + Sync
+pub trait MultipartDomainModel : DomainModel
 {
-    fn of(value: Self, multipart_files: Vec<MultipartFile>) -> Result<DM, String>;
+    fn new(value: &Self::CQE, multipart_files: Vec<MultipartFile>) -> Result<Self, String>;
 }
 

@@ -24,9 +24,10 @@ pub struct StudentCreate {
 unsafe impl Send for StudentCreate {}
 unsafe impl Sync for StudentCreate {}
 
-impl DomainModel<StudentCreate> for Student {
-    fn of(value: Self) -> Result<StudentCreate, String> {
-        StudentCreate::try_from(value)
+impl DomainModel for StudentCreate {
+    type CQE = Student;
+    fn new(value: &Self::CQE) -> Result<Self, String> {
+        StudentCreate::try_from(value.to_owned())
     }
 }
 
@@ -67,9 +68,11 @@ impl From<StudentCreate> for Student {
 
 
 
-impl DomainModel<IdOper<i64>> for Student {
-    fn of(value: Self) -> Result<IdOper<i64>, String> {
-        IdOper::<i64>::try_from(value)
+impl DomainModel for IdOper<i64> {
+
+    type CQE = Student;
+    fn new(value: &Self::CQE) -> Result<IdOper<i64>, String> {
+        IdOper::<i64>::try_from(value.to_owned())
     }
 }
 
@@ -114,9 +117,10 @@ pub struct StudentQuery {
 unsafe impl Send for StudentQuery {}
 unsafe impl Sync for StudentQuery {}
 
-impl DomainModel<StudentQuery> for PageReq<Student> {
-    fn of(value: Self) -> Result<StudentQuery, String> {
-        StudentQuery::try_from(value)
+impl DomainModel for StudentQuery {
+    type CQE = PageReq<Student>;
+    fn new(value: &Self::CQE) -> Result<StudentQuery, String> {
+        StudentQuery::try_from(value.to_owned())
     }
 }
 
@@ -192,8 +196,10 @@ unsafe impl Send for StudentUpdate {}
 unsafe impl Sync for StudentUpdate {}
 
 
-impl DomainModel<StudentUpdate> for Student {
-    fn of(value: Self) -> Result<StudentUpdate, String> {
+impl DomainModel for StudentUpdate {
+
+    type CQE = Student;
+    fn new(value: &Self::CQE) -> Result<StudentUpdate, String> {
         StudentUpdate::try_from(value.clone())
     }
 }
