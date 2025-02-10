@@ -1,11 +1,10 @@
-use crate::app::dto::req::MultipartFile;
+use crate::app::dto::req::{MultipartFile, PageReq};
 
 
 use serde::{Deserialize, Serialize};
 
-
 /// CQES: command , query, event, store
-pub trait DomainPrimitive<T>
+pub trait DomainPrimitive<T> : Clone + Send + Sync
     where T: Clone + Send + Sync
 {
     type Error;
@@ -13,8 +12,8 @@ pub trait DomainPrimitive<T>
     fn new(value: Option<T>) -> Result<Self, Self::Error> where Self: Sized;
 }
 
-pub trait DomainModel : Sized{
-    type CQES : Clone + Send + Sync ;
+pub trait DomainModel : Sized + Clone + Send + Sync{
+    type CQES : Clone + Send + Sync;
     fn new(value: &Self::CQES) -> Result<Self, String>;
 }
 
@@ -52,14 +51,24 @@ impl DomainPrimitive<i64> for Id<i64> {
 }
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
-pub struct IdOper<T> where T: Send + Sync{
+pub struct IdOper<T> where T: Send + Sync + Identifier {
     pub id: Id<T>
 }
 
+impl Identifier for i64 {}
 unsafe impl   Send  for IdOper<i64> {}
 unsafe impl   Sync  for IdOper<i64>  {}
 
+impl<T: Send + Sync + Identifier> Identifiable<T> for IdOper<T> {}
 
+
+#[derive(Debug, Serialize, Deserialize, Clone)]
+pub struct IdCommand<T> where T: Send + Sync + Identifier {
+    pub id: Option<T>
+}
+
+unsafe impl<T> Send for  IdCommand<T> where T: Clone + Send + Sync + Identifier  {}
+unsafe impl<T> Sync for  IdCommand<T> where T: Clone + Send + Sync + Identifier   {}
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct PageNo(pub u32);
@@ -94,9 +103,33 @@ impl DomainPrimitive<u16> for PageSize {
 }
 
 
-
-pub struct PageQuery<DM: DomainModel> {
+#[derive(Debug, Serialize, Deserialize, Clone)]
+pub struct PageQuery<DM: DomainModel + Send + Sync + Clone> {
     pub page_no: PageNo,
     pub page_size: PageSize,
-    pub req : DM
+    pub query : Option<DM>
+}
+
+unsafe impl<DM> Send for PageQuery<DM> where DM: DomainModel + Send + Sync + Clone  {}
+unsafe impl<DM> Sync for PageQuery<DM> where DM: DomainModel + Send + Sync + Clone  {}
+
+impl<DM: DomainModel> DomainModel for PageQuery<DM> where DM: DomainModel + Send + Sync + Clone {
+    type CQES = PageReq<DM::CQES>;
+
+    fn new(value: &PageReq<DM::CQES>) -> Result<Self, String> {
+        let page_no = PageNo::new(value.page_no)?;
+        let page_size = PageSize::new(value.page_size)?;
+        match &value.req {
+            None => Ok(PageQuery {
+                page_no,
+                page_size,
+                query: None
+            }),
+            Some(q) => Ok(PageQuery {
+                page_no,
+                page_size,
+                query: DM::new(q).ok()
+            })
+        }
+    }
 }

@@ -11,7 +11,7 @@ use crate::domain::core::{DomainModel, MultipartDomainModel};
 
 #[must_use]
 #[derive(Clone, Serialize, Deserialize)]
-pub struct ValidJson<T: Clone, DM: Clone + DomainModel<CQES=T>>(pub T, pub DM);
+pub struct ValidJson<T: Clone + Send + Sync + Serialize, DM: Clone + DomainModel<CQES=T>>(pub T, pub DM);
 
 #[async_trait]
 impl<T, S, DM> FromRequest<S> for ValidJson<T, DM>
@@ -21,7 +21,6 @@ where
     DM: Clone + Send + Sync + DomainModel<CQES=T> + TryFrom<T> +  'static,  // 确保 U 可以进行校验
 {
     type Rejection = Res<String>;
-
     async fn from_request(req: Request, state: &S) -> Result<Self, Self::Rejection> {
 
         let json_result = Json::<T>::from_request(req, state).await.map_err(|_| "解析失败".to_string());
@@ -167,69 +166,6 @@ where
     }
 }
 
-
-
-#[async_trait]
-pub trait UnifiedExtractor<S>: Sized
-where
-    S: Send + Sync,
-{
-    async fn extract(req: Request, state: &S) -> Result<Self, Res<String>>;
-}
-
-// #[async_trait]
-// impl<S, T> UnifiedExtractor<S> for T
-// where
-//     S: Send + Sync,
-//     T: Serialize + DeserializeOwned + Clone,
-// {
-//     async fn extract(req: Request, state: &S) -> Result<Self, Res<String>> {
-//         let content_type = req.headers().get("content-type").and_then(|v| v.to_str().ok());
-// 
-//         if let Some(content_type) = content_type {
-//             let content_type = content_type.to_lowercase();
-//             if content_type.contains("application/json") {
-//                 return match Json::<T>::from_request(req, state).await {
-//                     Ok(Json(value)) => Ok(value),
-//                     Err(e) => Err(Res::err(format!("JSON 参数格式非法: {}", e.body_text()))),
-//                 };
-//             } else if content_type.to_lowercase().contains("application/x-www-form-urlencoded") {
-//                 return match Form::<T>::from_request(req, state).await {
-//                     Ok(Form(value)) => Ok(value),
-//                     Err(e) => Err(Res::err(format!("Form 参数格式非法: {}", e.body_text()))),
-//                 };
-//             }
-//         }
-// 
-//         match Query::<T>::from_request(req, state).await {
-//             Ok(Query(value)) => Ok(value),
-//             Err(e) => Err(Res::err(format!("Query 参数格式非法: {}", e.body_text()))),
-//         }
-//     }
-// }
-// 
-// 
-// #[must_use]
-// #[derive(Clone, Serialize, Deserialize)]
-// pub struct Valid<T: Clone, DG: Clone>(pub T, pub PhantomData<DG>);
-// 
-// #[async_trait]
-// impl<T, S, DG> FromRequest<S> for Valid<T, DG>
-// where
-//     S: Send + Sync,
-//     T: Serialize + DeserializeOwned + DomainModel<DG> + From<DG> + Clone,
-//     DG: Clone + TryFrom<T> + Send + Sync + 'static,
-// {
-//     type Rejection = Res<String>;
-// 
-//     async fn from_request(req: Request, state: &S) -> Result<Self, Self::Rejection> {
-//         let value: T = UnifiedExtractor::extract(req, state).await?;
-//         match DomainModel::new(value) {
-//             Ok(domain_primitive) => Ok(Valid(DG::into(domain_primitive), PhantomData)),
-//             Err(e) => Err(Res::err(e)),
-//         }
-//     }
-// }
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct PageReq<T: Clone> {

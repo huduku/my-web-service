@@ -1,10 +1,10 @@
 use crate::app::dto::res::{DbRes, PageRes};
-use crate::domain::cmd::student_cmd::StudentQuery;
+use crate::domain::cmd::student_cmd::StudentPageQuery;
 use crate::domain::core::{DomainModel, Id, PageQuery};
 use crate::domain::entity::student::Student;
 use crate::domain::primitive::students::StuNo;
-use crate::domain::repo::Repository;
 use crate::domain::repo::student::StudentRepository;
+use crate::domain::repo::Repository;
 use crate::infra::po::student::StudentPO;
 use crate::pool;
 
@@ -46,11 +46,11 @@ impl StudentRepository for StudentRepositoryImpl {
         }
     }
 
-    async fn find_page(query: PageQuery<StudentQuery>) -> Result<PageRes<Student>, String> {
+    async fn find_page(query: PageQuery<StudentPageQuery>) -> Result<PageRes<Student>, String> {
         todo!()
     }
 
-    async fn count(query: StudentQuery) -> Result<u64, String> {
+    async fn count(query: StudentPageQuery) -> Result<u64, String> {
         todo!()
     }
 }
