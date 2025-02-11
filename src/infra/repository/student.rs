@@ -1,8 +1,8 @@
-use crate::app::dto::res::PageRes;
+use crate::api::res::PageRes;
 use crate::domain::cmd::student_cmd::StudentPageQuery;
 use crate::domain::core::{DomainModel, Id, PageQuery};
 use crate::domain::entity::student::Student;
-use crate::domain::primitive::students::StuNo;
+use crate::api::primitive::students::StuNo;
 use crate::domain::repo::student::StudentRepository;
 use crate::domain::repo::Repository;
 use crate::infra::po::student::StudentPO;

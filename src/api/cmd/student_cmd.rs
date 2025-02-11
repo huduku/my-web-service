@@ -24,6 +24,8 @@ pub struct StudentUpdateCommand {
 pub struct StudentPageQueryCommand {
     pub stu_no: Option<String>,
     pub name: Option<String>,
-    pub class_id: Option<u32>
+    pub class_id: Option<u32>,
+    pub age_start: Option<u16>,
+    pub age_end: Option<u16>
 }
 

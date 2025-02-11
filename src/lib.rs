@@ -1,5 +1,7 @@
 use rbatis::RBatis;
 
+pub mod api;
+
 pub mod domain;
 
 pub mod route;
@@ -12,6 +14,7 @@ pub mod infra;
 
 pub mod app;
 pub mod context;
+
 
 pub struct AppState {
     pub rbatis: RBatis,

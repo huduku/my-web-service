@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 use crate::domain::core::{Aggregate, DomainModel, DomainPrimitive, Entity, Id, Identifiable};
-use crate::domain::primitive::students::{Address, Age, ClassId, StuNo, UserName};
+use crate::api::primitive::students::{Address, Age, ClassId, StuNo, UserName};
 use crate::infra::po::student::StudentPO;
 
 #[derive(Clone, Debug, Serialize, Deserialize)]

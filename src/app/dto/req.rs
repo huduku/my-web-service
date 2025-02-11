@@ -1,6 +1,6 @@
 use std::collections::HashMap;
 
-use crate::app::dto::res::Res;
+use crate::api::res::Res;
 use crate::domain::core::{DomainModel, MultipartDomainModel};
 use axum::extract::{FromRequest, Multipart, Query, Request};
 use axum::{async_trait, Form, Json};

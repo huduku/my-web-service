@@ -2,7 +2,7 @@ use rbatis::htmlsql_select_page;
 use serde::{Deserialize, Serialize};
 use crate::domain::core::{DomainPrimitive, Id};
 use crate::domain::entity::student::Student;
-use crate::domain::primitive::students::{Address, Age, ClassId, StuNo, UserName};
+use crate::api::primitive::students::{Address, Age, ClassId, StuNo, UserName};
 
 #[derive(Clone, Debug, Serialize, Deserialize)]
 pub struct StudentPO {
