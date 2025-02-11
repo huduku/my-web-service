@@ -88,8 +88,8 @@ impl DomainPrimitive<String> for UserNameQuery {
                 if v.is_empty() {
                     return Ok(UserNameQuery(None));
                 }
-                if v.graphemes(true).count() < 3 {
-                    return Err("name必须为空或者长度不能小于3".to_string());
+                if v.graphemes(true).count() < 2 {
+                    return Err("name必须为空或者长度不能小于2".to_string());
                 }
                 Ok(UserNameQuery(Some(v)))
             },
