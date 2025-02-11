@@ -131,15 +131,13 @@ impl<T, DM> TryFrom<PageReq<T>> for PageQuery<DM>
                 query: None
             }),
             Some(cqes) => {
-                let dm = DM::new(cqes);
-                if dm.is_err() { 
-                    Err(dm.err().unwrap())
-                } else { 
-                    Ok(PageQuery {
+                match DM::new(cqes) {
+                    Ok(dm) => Ok(PageQuery {
                         page_no,
                         page_size,
-                        query: dm.ok()
-                    })
+                        query: Some(dm),
+                    }),
+                    Err(e) => Err(e),
                 }
             }
         }
