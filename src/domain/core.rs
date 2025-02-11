@@ -1,3 +1,4 @@
+use rbs::Error::E;
 use crate::app::dto::req::{MultipartFile, PageReq};
 
 
@@ -120,7 +121,6 @@ impl<T, DM> TryFrom<PageReq<T>> for PageQuery<DM>
     DM: DomainModel<CQES=T> + Clone + Send + Sync
 {
     type Error = String;
-
     fn try_from(value: PageReq<T>) -> Result<Self, Self::Error> {
         let page_no = PageNo::new(value.page_no)?;
         let page_size = PageSize::new(value.page_size)?;
@@ -130,17 +130,18 @@ impl<T, DM> TryFrom<PageReq<T>> for PageQuery<DM>
                 page_size,
                 query: None
             }),
-            Some(q) => Ok(PageQuery {
-                page_no,
-                page_size,
-                query: {
-                    match DM::new(q) {
-                        Ok(t) => Some(t),
-                        Err(e) => None
-                    }
-                    // let t = DM::new(q)?;
+            Some(cqes) => {
+                let dm = DM::new(cqes);
+                if dm.is_err() { 
+                    Err(dm.err().unwrap())
+                } else { 
+                    Ok(PageQuery {
+                        page_no,
+                        page_size,
+                        query: dm.ok()
+                    })
                 }
-            })
+            }
         }
     }
 }
