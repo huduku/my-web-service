@@ -1,5 +1,5 @@
 use serde::{Deserialize, Serialize};
-use crate::app::dto::IdCommand;
+use crate::api::cmd::IdCommand;
 use crate::api::primitive::students::{Address, Age, ClassId, StuNo, UserName};
 
 
