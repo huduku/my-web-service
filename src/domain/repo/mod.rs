@@ -1,7 +1,7 @@
 pub mod student;
 
 
-use crate::domain::core::{Identifier, Aggregate};
+use crate::ddd::core::{Identifier, Aggregate};
 pub trait Repository<ID: Identifier, T : Aggregate<ID>> {
 
     async fn attach(aggr: T);

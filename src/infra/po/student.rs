@@ -1,6 +1,6 @@
 use rbatis::htmlsql_select_page;
 use serde::{Deserialize, Serialize};
-use crate::domain::core::{DomainPrimitive, Id};
+use crate::ddd::core::{DomainPrimitive, Id};
 use crate::domain::entity::student::Student;
 use crate::api::primitive::students::{Address, Age, ClassId, StuNo, UserName};
 

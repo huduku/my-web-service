@@ -1,7 +1,7 @@
 
 use serde::{Deserialize, Serialize};
 use unicode_segmentation::UnicodeSegmentation;
-use crate::domain::core::DomainPrimitive;
+use crate::ddd::core::DomainPrimitive;
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct StuNo(pub String);

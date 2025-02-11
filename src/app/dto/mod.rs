@@ -1,5 +1,5 @@
 use serde::{Deserialize, Serialize};
-use crate::domain::core::Identifier;
+use crate::ddd::core::Identifier;
 
 pub mod req;
 

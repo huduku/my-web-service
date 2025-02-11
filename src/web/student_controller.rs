@@ -2,15 +2,13 @@ use crate::app::dto::IdCommand;
 use crate::pool;
 use axum::response::IntoResponse;
 
-use crate::domain::{
-    cmd::student_cmd::{StudentCreate, StudentPageQuery, StudentUpdate},
-    core::IdOper
-};
+use crate::domain::cmd::student_cmd::{StudentCreate, StudentPageQuery, StudentUpdate};
 
 use crate::app::dto::req::{PageReq, ValidForm, ValidJson, ValidQuery};
 use crate::api::res::JsonRes;
 use crate::api::cmd::student_cmd::{StudentCreateCommand, StudentPageQueryCommand, StudentUpdateCommand};
-use crate::domain::core::PageQuery;
+use crate::ddd::core::IdOper;
+use crate::ddd::core::PageQuery;
 use crate::domain::repo::student::StudentRepository;
 use crate::infra::repository::student::StudentRepositoryImpl;
 use crate::service::student_services::{

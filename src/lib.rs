@@ -1,5 +1,7 @@
 use rbatis::RBatis;
 
+pub mod ddd;
+
 pub mod api;
 
 pub mod domain;

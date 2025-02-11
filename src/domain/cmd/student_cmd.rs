@@ -4,8 +4,8 @@ use crate::api::primitive::students::{Address, Age, ClassId, StuNo, UserName};
 
 
 use crate::api::cmd::student_cmd::{StudentCreateCommand, StudentPageQueryCommand, StudentUpdateCommand};
-use crate::domain::core::{DomainModel, DomainPrimitive};
-use crate::domain::core::{Id, IdOper};
+use crate::ddd::core::{DomainModel, DomainPrimitive};
+use crate::ddd::core::{Id, IdOper};
 use crate::api::primitive::students::{ClassIdQuery, StuNoQuery, UserNameQuery};
 use crate::infra::po::student::StudentPO;
 

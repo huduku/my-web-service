@@ -1,7 +1,7 @@
 use std::collections::HashMap;
 
 use crate::api::res::Res;
-use crate::domain::core::{DomainModel, MultipartDomainModel};
+use crate::ddd::core::{DomainModel, MultipartDomainModel};
 use axum::extract::{FromRequest, Multipart, Query, Request};
 use axum::{async_trait, Form, Json};
 use serde::de::DeserializeOwned;
