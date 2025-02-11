@@ -47,6 +47,7 @@ impl StudentRepository for StudentRepositoryImpl {
     }
 
     async fn find_page(query: PageQuery<StudentPageQuery>) -> Result<PageRes<Student>, String> {
+        
         todo!()
     }
 

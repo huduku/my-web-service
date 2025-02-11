@@ -143,3 +143,21 @@ impl<T, DM> TryFrom<PageReq<T>> for PageQuery<DM>
         }
     }
 }
+
+
+impl<DM: DomainModel, T: From<DM> + Clone> From<PageQuery<DM>> for PageReq<T> {
+    fn from(value: PageQuery<DM>) -> Self {
+        match value.query {
+            Some(q) => Self {
+                page_no: Some(value.page_no.0),
+                page_size: Some(value.page_size.0),
+                req: Some(q.into())
+            },
+            None => Self {
+                page_no: Some(value.page_no.0),
+                page_size: Some(value.page_size.0),
+                req: None
+            }
+        }
+    }
+}

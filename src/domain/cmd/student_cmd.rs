@@ -2,9 +2,9 @@ use serde::{Deserialize, Serialize};
 use crate::app::dto::IdCommand;
 use crate::domain::primitive::students::{Address, Age, ClassId, StuNo, UserName};
 
-use crate::app::dto::req::PageReq;
+
 use crate::app::dto::student_cmd::{StudentCreateCommand, StudentPageQueryCommand, StudentUpdateCommand};
-use crate::domain::core::{DomainModel, DomainPrimitive, PageQuery};
+use crate::domain::core::{DomainModel, DomainPrimitive};
 use crate::domain::core::{Id, IdOper};
 use crate::domain::primitive::students::{ClassIdQuery, StuNoQuery, UserNameQuery};
 use crate::infra::po::student::StudentPO;
@@ -138,27 +138,15 @@ impl TryFrom<StudentPageQueryCommand> for StudentPageQuery {
 }
 
 
-impl From<PageQuery<StudentPageQuery>> for PageReq<StudentPO> {
-
-    fn from(value: PageQuery<StudentPageQuery>) -> Self {
-        match value.query {
-            Some(q) => Self {
-                page_no: Some(value.page_no.0),
-                page_size: Some(value.page_size.0),
-                req: Some(StudentPO {
-                    id: None,
-                    stu_no: q.stu_no.0,
-                    name: q.name.0,
-                    age: None,
-                    class_id: q.class_id.0,
-                    address: None,
-                })
-            },
-            None => Self {
-                page_no: Some(value.page_no.0),
-                page_size: Some(value.page_size.0),
-                req: None
-            }
+impl From<StudentPageQuery> for StudentPO {
+    fn from(value: StudentPageQuery) -> Self {
+        Self {
+            id: None,
+            stu_no: value.stu_no.0,
+            name: value.name.0,
+            age: None,
+            class_id: value.class_id.0,
+            address: None,
         }
     }
 }
@@ -188,9 +176,6 @@ impl DomainModel for StudentUpdate {
         StudentUpdate::try_from(value.clone())
     }
 }
-
-
-
 
 impl TryFrom<StudentUpdateCommand> for StudentUpdate {
     type Error = String;
