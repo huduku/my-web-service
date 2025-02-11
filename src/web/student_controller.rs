@@ -13,13 +13,7 @@ use crate::ddd::dto::PageReq;
 use crate::domain::repo::student::StudentRepository;
 use crate::infra::repository::student::StudentRepositoryImpl;
 use crate::infra::web::res::JsonRes;
-use crate::domain::service::student_services::{
-    create_student,
-    delete_student,
-    get_student
-    ,
-    update_student
-};
+use crate::domain::service::student_services::{create_student, delete_student, get_student, list_students, update_student};
 
 pub(crate) async fn get_student_handler(
     ValidQuery(stu, ..): ValidQuery<IdCommand<i64>, IdOper<i64>>,
@@ -50,8 +44,7 @@ pub async fn delete_student_handler(
 }
 
 pub async fn list_students_handler(
-    ValidJson(_, page): ValidJson<PageReq<StudentPageQueryCommand>, PageQuery<StudentPageQuery>>, ) 
+    ValidJson(_, page_query): ValidJson<PageReq<StudentPageQueryCommand>, PageQuery<StudentPageQuery>>, ) 
     -> impl IntoResponse {
-    let res = StudentRepositoryImpl::find_page(page).await;
-    JsonRes(res)
+    JsonRes(list_students(page_query).await)
 }

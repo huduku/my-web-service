@@ -1,12 +1,13 @@
-
 use crate::infra::po::student::StudentPO;
-
-use axum::extract::FromRef;
 
 use rbatis::{rbatis::RBatis, rbdc::db::ExecResult};
 
-use rbatis::{Page, PageRequest};
-use crate::ddd::dto::PageReq;
+use crate::api::res::PageRes;
+use crate::ddd::core::PageQuery;
+use crate::domain::cmd::student_cmd::StudentPageQuery;
+use crate::domain::entity::student::Student;
+use crate::domain::repo::student::StudentRepository;
+use crate::infra::repository::student::StudentRepositoryImpl;
 use crate::infra::repository::DbRes;
 
 pub async fn get_student(rb: &RBatis, id: i64) -> Result<StudentPO, String> {
@@ -33,10 +34,7 @@ pub async fn delete_student(rb: &RBatis, id: i64) -> Result<ExecResult, String> 
     res
 }
 
-pub async fn list_students(rb: &RBatis, stu_page_req: PageReq<StudentPO>,)
-                           -> Result<Page<StudentPO>, String> {
-    let page = PageRequest::from_ref(&stu_page_req);
-    let stu = &stu_page_req.req;
-    let DbRes(res) = StudentPO::select_page(rb, &page, stu).await.into();
-    res
+pub async fn list_students(page_query: PageQuery<StudentPageQuery>,)
+                           -> Result<PageRes<Student>, String> {
+    StudentRepositoryImpl::find_page(page_query).await
 }
