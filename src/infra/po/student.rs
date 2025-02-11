@@ -1,6 +1,6 @@
 use rbatis::htmlsql_select_page;
 use serde::{Deserialize, Serialize};
-use crate::ddd::core::{DomainPrimitive, Id, IdOper};
+use crate::ddd::core::{DomainModel, DomainPrimitive, Id, IdOper};
 use crate::domain::entity::student::Student;
 use crate::api::primitive::students::{Address, Age, ClassId, StuNo, UserName};
 use crate::domain::cmd::student_cmd::{StudentCreate, StudentPageQuery, StudentUpdate};
@@ -85,6 +85,13 @@ impl From<StudentUpdate> for StudentPO {
             class_id: Some(value.class_id.0),
             address: Some(value.address.0),
         }
+    }
+}
+
+impl DomainModel for Student {
+    type CQES = StudentPO;
+    fn new(value: &Self::CQES) -> Result<Self, String> {
+        Self::try_from(value.to_owned())
     }
 }
 
