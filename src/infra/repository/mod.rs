@@ -1,9 +1,9 @@
-use std::marker::PhantomData;
-use axum::extract::FromRef;
-use rbatis::{Error, Page, PageRequest};
-use crate::app::dto::req::PageReq;
 use crate::api::res::PageRes;
+
 use crate::ddd::core::{DomainModel, PageQuery};
+use axum::extract::FromRef;
+use rbatis::{Page, PageRequest};
+use crate::ddd::dto::PageReq;
 
 pub mod student;
 

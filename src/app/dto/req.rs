@@ -6,7 +6,7 @@ use axum::extract::{FromRequest, Multipart, Query, Request};
 use axum::{async_trait, Form, Json};
 use serde::de::DeserializeOwned;
 use serde::{Deserialize, Serialize};
-
+use crate::ddd::dto::MultipartFile;
 
 #[must_use]
 #[derive(Clone, Serialize, Deserialize)]
@@ -69,11 +69,7 @@ where
     }
 }
 
-pub struct MultipartFile {
-    pub filename: String,
-    pub content_type: Option<String>,
-    pub data: Vec<u8>,
-}
+
 
 
 
@@ -166,10 +162,5 @@ where
 }
 
 
-#[derive(Debug, Serialize, Deserialize, Clone)]
-pub struct PageReq<T: Clone> {
-    pub page_no: Option<u32>,
-    pub page_size: Option<u16>,
-    pub req: Option<T>,
-}
+
 

@@ -1,8 +1,6 @@
-use crate::app::dto::req::{MultipartFile, PageReq};
-
 
 use serde::{Deserialize, Serialize};
-
+use crate::ddd::dto::{MultipartFile, PageReq};
 
 /// CQES: command , query, event, store
 pub trait DomainPrimitive<T> : Clone + Send + Sync
