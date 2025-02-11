@@ -12,7 +12,9 @@ use crate::app::dto::req::{PageReq, ValidForm, ValidJson, ValidQuery};
 use crate::app::dto::res::{JsonRes, PageRes, Res};
 use crate::app::dto::student_cmd::{StudentCreateCommand, StudentPageQueryCommand, StudentUpdateCommand};
 use crate::domain::core::PageQuery;
+use crate::domain::repo::student::StudentRepository;
 use crate::infra::po::student::StudentPO;
+use crate::infra::repository::student::StudentRepositoryImpl;
 use crate::service::student_services::{
     create_student,
     delete_student,
@@ -62,10 +64,6 @@ pub async fn list_students_handler(
     // State(srb): State<Arc<AppState>>,
     ValidJson(page_query_command, page): ValidJson<PageReq<StudentPageQueryCommand>, PageQuery<StudentPageQuery>>,
 ) -> impl IntoResponse {
-    let rb = pool!();
-    match list_students(rb, page.into()).await {
-        Ok(students) => Res::<PageRes<StudentPO>>::of(students.into()),
-        // Ok(students) => Res::of(PageRes::from(students)),
-        Err(e) => Res::err(e.to_string()),
-    }
+    let res = StudentRepositoryImpl::find_page(page).await;
+    JsonRes(res)
 }

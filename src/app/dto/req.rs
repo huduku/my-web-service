@@ -1,12 +1,11 @@
 use std::collections::HashMap;
 
 use crate::app::dto::res::Res;
-use axum::extract::{FromRef, FromRequest, Multipart, Query, Request};
+use crate::domain::core::{DomainModel, MultipartDomainModel};
+use axum::extract::{FromRequest, Multipart, Query, Request};
 use axum::{async_trait, Form, Json};
-use rbatis::PageRequest;
 use serde::de::DeserializeOwned;
 use serde::{Deserialize, Serialize};
-use crate::domain::core::{DomainModel, MultipartDomainModel};
 
 
 #[must_use]
@@ -172,15 +171,5 @@ pub struct PageReq<T: Clone> {
     pub page_no: Option<u32>,
     pub page_size: Option<u16>,
     pub req: Option<T>,
-}
-
-
-impl<T: Clone> FromRef<PageReq<T>> for PageRequest {
-    fn from_ref(value: &PageReq<T>) -> Self {
-        PageRequest::new(
-            value.page_no.unwrap_or(1) as u64,
-            value.page_size.unwrap_or(10) as u64,
-        )
-    }
 }
 

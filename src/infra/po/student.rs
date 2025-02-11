@@ -1,5 +1,8 @@
 use rbatis::htmlsql_select_page;
 use serde::{Deserialize, Serialize};
+use crate::domain::core::{DomainPrimitive, Id};
+use crate::domain::entity::student::Student;
+use crate::domain::primitive::students::{Address, Age, ClassId, StuNo, UserName};
 
 #[derive(Clone, Debug, Serialize, Deserialize)]
 pub struct StudentPO {
@@ -22,3 +25,18 @@ impl StudentPO {
     htmlsql_select_page!(select_page(dto:&Option<StudentPO>) -> StudentPO => "src/resources/mapper/student.html");
 }
 
+
+impl TryFrom<StudentPO> for Student {
+    type Error = String;
+
+    fn try_from(value: StudentPO) -> Result<Self, Self::Error> {
+        Ok(Self {
+            id: Id::new(value.id)?,
+            stu_no: StuNo::new(value.stu_no)?,
+            name: UserName::new(value.name)?,
+            age: Age::new(value.age)?,
+            class_id: ClassId::new(value.class_id)?,
+            address: Address::new(value.address)?
+        })
+    }
+}

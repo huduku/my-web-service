@@ -1,14 +1,12 @@
 
 use crate::infra::po::student::StudentPO;
-use crate::app::dto::res::DbRes;
+
 use axum::extract::FromRef;
 
 use rbatis::{rbatis::RBatis, rbdc::db::ExecResult};
-
 use crate::app::dto::req::PageReq;
 use rbatis::{Page, PageRequest};
-
-
+use crate::infra::repository::DbRes;
 
 pub async fn get_student(rb: &RBatis, id: i64) -> Result<StudentPO, String> {
     let DbRes(res) = StudentPO::select_by_id(rb, id).await.into();

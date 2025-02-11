@@ -1,4 +1,4 @@
-use crate::app::dto::res::{DbRes, PageRes};
+use crate::app::dto::res::PageRes;
 use crate::domain::cmd::student_cmd::StudentPageQuery;
 use crate::domain::core::{DomainModel, Id, PageQuery};
 use crate::domain::entity::student::Student;
@@ -6,7 +6,10 @@ use crate::domain::primitive::students::StuNo;
 use crate::domain::repo::student::StudentRepository;
 use crate::domain::repo::Repository;
 use crate::infra::po::student::StudentPO;
+use crate::infra::repository::DbRes;
 use crate::pool;
+use axum::extract::FromRef;
+use rbatis::{Page, PageRequest};
 
 pub struct StudentRepositoryImpl;
 
@@ -34,7 +37,8 @@ impl Repository<Id<i64>, Student> for StudentRepositoryImpl {
 
 impl StudentRepository for StudentRepositoryImpl {
     async fn find_one(stu_no: StuNo) -> Result<Student, String> {
-        let DbRes(res)  = StudentPO::select_by_stu_no(pool!(), stu_no.0).await.into();
+        let DbRes(res)  = 
+            StudentPO::select_by_stu_no(pool!(), stu_no.0).await.into();
         match res {
             Ok(stu) => {
                 match stu {
@@ -47,8 +51,15 @@ impl StudentRepository for StudentRepositoryImpl {
     }
 
     async fn find_page(query: PageQuery<StudentPageQuery>) -> Result<PageRes<Student>, String> {
-        
-        todo!()
+        let page: PageRequest = PageRequest::from_ref(&query);
+        let stu = query.query.map(|q| q.into());
+        let DbRes(db_res) =  
+            DbRes::<Page<StudentPO>>::from(StudentPO::select_page(pool!(), &page, &stu).await);
+            // StudentPO::select_page(pool!(), &page, &stu).await.into();
+        match db_res { 
+            Ok(res) => Ok(PageRes::<Student>::try_from(res)?),
+            Err(e) => Err(e)
+        }
     }
 
     async fn count(query: StudentPageQuery) -> Result<u64, String> {

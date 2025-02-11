@@ -3,6 +3,7 @@ use rbatis::Page;
 use serde::de::DeserializeOwned;
 use serde::{Deserialize, Serialize};
 use std::fmt::{Display, Formatter};
+use crate::domain::core::DomainModel;
 
 const SUCCESS: &str = "10000";
 
@@ -85,18 +86,19 @@ impl<T> From<Option<T>> for Res<T> {
     }
 }
 
-impl<T> From<Page<T>> for PageRes<T>
-    where T: Send + Sync
-{
-    fn from(value: Page<T>) -> Self {
-        PageRes {
-            page_no: value.page_no,
-            page_size: value.page_size,
-            total: value.total,
-            rows: Some(value.records),
-        }
-    }
-}
+// impl<T> From<Page<T>> for PageRes<T>
+//     where T: Send + Sync
+// {
+//     fn from(value: Page<T>) -> Self {
+//         PageRes {
+//             page_no: value.page_no,
+//             page_size: value.page_size,
+//             total: value.total,
+//             rows: Some(value.records),
+//         }
+//     }
+// }
+
 
 impl<T> From<PageRes<T>> for Res<PageRes<T>>
 {
@@ -153,12 +155,3 @@ where
     }
 }
 
-
-
-pub struct DbRes<T>(pub Result<T, String>);
-
-impl<T> From<Result<T, rbatis::Error>> for DbRes<T> {
-    fn from(value: Result<T, rbatis::Error>) -> Self {
-        DbRes(value.map_err(|_| "数据库异常".to_string()))
-    }
-}
