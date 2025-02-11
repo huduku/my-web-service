@@ -2,6 +2,7 @@ use crate::app::dto::req::{MultipartFile, PageReq};
 
 
 use serde::{Deserialize, Serialize};
+use serde::de::DeserializeOwned;
 
 /// CQES: command , query, event, store
 pub trait DomainPrimitive<T> : Clone + Send + Sync
@@ -62,13 +63,6 @@ unsafe impl   Sync  for IdOper<i64>  {}
 impl<T: Send + Sync + Identifier> Identifiable<T> for IdOper<T> {}
 
 
-#[derive(Debug, Serialize, Deserialize, Clone)]
-pub struct IdCommand<T> where T: Send + Sync + Identifier {
-    pub id: Option<T>
-}
-
-unsafe impl<T> Send for  IdCommand<T> where T: Clone + Send + Sync + Identifier  {}
-unsafe impl<T> Sync for  IdCommand<T> where T: Clone + Send + Sync + Identifier   {}
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct PageNo(pub u32);
@@ -117,6 +111,17 @@ impl<DM: DomainModel> DomainModel for PageQuery<DM> where DM: DomainModel + Send
     type CQES = PageReq<DM::CQES>;
 
     fn new(value: &PageReq<DM::CQES>) -> Result<Self, String> {
+        PageQuery::<DM>::try_from(value.to_owned())
+    }
+}
+
+impl<T, DM> TryFrom<PageReq<T>> for PageQuery<DM> 
+    where T: Clone,
+    DM: DomainModel<CQES=T> + Clone + Send + Sync
+{
+    type Error = String;
+
+    fn try_from(value: PageReq<T>) -> Result<Self, Self::Error> {
         let page_no = PageNo::new(value.page_no)?;
         let page_size = PageSize::new(value.page_size)?;
         match &value.req {
@@ -128,7 +133,13 @@ impl<DM: DomainModel> DomainModel for PageQuery<DM> where DM: DomainModel + Send
             Some(q) => Ok(PageQuery {
                 page_no,
                 page_size,
-                query: DM::new(q).ok()
+                query: {
+                    match DM::new(q) {
+                        Ok(t) => Some(t),
+                        Err(e) => None
+                    }
+                    // let t = DM::new(q)?;
+                }
             })
         }
     }

@@ -1,10 +1,10 @@
 use serde::{Deserialize, Serialize};
-
+use crate::app::dto::IdCommand;
 use crate::domain::primitive::students::{Address, Age, ClassId, StuNo, UserName};
 
 use crate::app::dto::req::PageReq;
 use crate::app::dto::student_cmd::{StudentCreateCommand, StudentPageQueryCommand, StudentUpdateCommand};
-use crate::domain::core::{DomainModel, DomainPrimitive, IdCommand, PageQuery};
+use crate::domain::core::{DomainModel, DomainPrimitive, PageQuery};
 use crate::domain::core::{Id, IdOper};
 use crate::domain::primitive::students::{ClassIdQuery, StuNoQuery, UserNameQuery};
 use crate::infra::po::student::StudentPO;

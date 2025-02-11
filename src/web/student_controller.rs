@@ -1,6 +1,6 @@
 
 use axum::response::IntoResponse;
-
+use crate::app::dto::IdCommand;
 use crate::pool;
 
 use crate::domain::{
@@ -11,7 +11,7 @@ use crate::domain::{
 use crate::app::dto::req::{PageReq, ValidForm, ValidJson, ValidQuery};
 use crate::app::dto::res::{JsonRes, PageRes, Res};
 use crate::app::dto::student_cmd::{StudentCreateCommand, StudentPageQueryCommand, StudentUpdateCommand};
-use crate::domain::core::{IdCommand, PageQuery};
+use crate::domain::core::PageQuery;
 use crate::infra::po::student::StudentPO;
 use crate::service::student_services::{
     create_student,
@@ -60,7 +60,7 @@ pub async fn delete_student_handler(
 
 pub async fn list_students_handler(
     // State(srb): State<Arc<AppState>>,
-    ValidJson(_, page): ValidJson<PageReq<StudentPageQueryCommand>, PageQuery<StudentPageQuery>>,
+    ValidJson(page_query_command, page): ValidJson<PageReq<StudentPageQueryCommand>, PageQuery<StudentPageQuery>>,
 ) -> impl IntoResponse {
     let rb = pool!();
     match list_students(rb, page.into()).await {

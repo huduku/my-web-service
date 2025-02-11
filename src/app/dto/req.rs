@@ -11,13 +11,13 @@ use crate::domain::core::{DomainModel, MultipartDomainModel};
 
 #[must_use]
 #[derive(Clone, Serialize, Deserialize)]
-pub struct ValidJson<T: Clone + Send + Sync + Serialize, DM: Clone + DomainModel<CQES=T>>(pub T, pub DM);
+pub struct ValidJson<T: Clone, DM: Clone + DomainModel<CQES=T>>(pub T, pub DM);
 
 #[async_trait]
 impl<T, S, DM> FromRequest<S> for ValidJson<T, DM>
 where
     S: Send + Sync,
-    T: Serialize + DeserializeOwned + Clone + Send + Sync + From<DM> + 'static, // 确保 T 可以解析
+    T: Serialize + DeserializeOwned + Clone + 'static, // 确保 T 可以解析
     DM: Clone + Send + Sync + DomainModel<CQES=T> + TryFrom<T> +  'static,  // 确保 U 可以进行校验
 {
     type Rejection = Res<String>;
@@ -48,7 +48,7 @@ pub struct ValidQuery<T: Clone, DM: Clone + DomainModel<CQES=T>>(pub T, pub DM);
 impl<T, S, DM> FromRequest<S> for ValidQuery<T, DM>
 where
     S: Send + Sync,
-    T: Serialize + DeserializeOwned + Clone + Send + Sync + From<DM> + 'static, // 确保 T 可以解析
+    T: Serialize + DeserializeOwned + Clone + 'static, // 确保 T 可以解析
     DM: Clone + Send + Sync + DomainModel<CQES=T> + TryFrom<T> +  'static,  // 确保 U 可以进行校验
 {
     type Rejection = Res<String>;
@@ -85,7 +85,7 @@ pub struct ValidFile<T, DM: Clone + DomainModel<CQES=T>>(pub T, pub DM);
 impl<S, T, DM> FromRequest<S> for ValidFile<T, DM>
 where
     S: Send + Sync,
-    T: Serialize + DeserializeOwned + Clone + Send + Sync + From<DM> + 'static, // 确保 T 可以解析
+    T: Serialize + DeserializeOwned + Clone + 'static, // 确保 T 可以解析
     DM: Clone + Send + Sync + MultipartDomainModel<CQES=T> + TryFrom<T> +  'static,  // 确保 U 可以进行校验
 {
     type Rejection = Res<String>;
@@ -146,7 +146,7 @@ pub struct ValidForm<T, DM: Clone + DomainModel<CQES=T>>(pub T, pub DM);
 #[async_trait]
 impl<S, T, DM> FromRequest<S> for ValidForm<T, DM>
 where
-    T: Serialize + DeserializeOwned + From<DM> + Clone,
+    T: Serialize + DeserializeOwned + Clone,
     DM: DomainModel<CQES=T> + Clone + TryFrom<T> + Send + Sync + 'static,
     S: Send + Sync,
 {
