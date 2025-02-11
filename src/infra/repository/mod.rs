@@ -48,15 +48,14 @@ impl<DM: DomainModel> From<PageQuery<DM>> for PageRequest {
 }
 
 
-impl<T: Clone + Send + Sync, DM: DomainModel + TryFrom<T>> TryFrom<Page<T>> for PageRes<DM> {
+impl<T: Clone + Send + Sync, DM: DomainModel<CQES=T> + TryFrom<T>> TryFrom<Page<T>> for PageRes<DM> {
     type Error = String;
-
     fn try_from(value: Page<T>) -> Result<Self, Self::Error> {
         let records = value.records;
         let rows: Vec<DM> = records.into_iter()
-            .map(TryInto::<DM>::try_into)
+            .map(|r| DM::new(&r))
             .collect::<Result<Vec<_>, _>>()
-            .map_err(|e| "转换错误".to_string())?;
+            .map_err(|e| format!("{}: {}", "已存储数据有误", e))?;
         Ok(Self {
             page_no: value.page_no,
             page_size: value.page_size,

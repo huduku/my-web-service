@@ -13,7 +13,7 @@ use crate::ddd::dto::PageReq;
 use crate::domain::repo::student::StudentRepository;
 use crate::infra::repository::student::StudentRepositoryImpl;
 use crate::infra::web::res::JsonRes;
-use crate::service::student_services::{
+use crate::domain::service::student_services::{
     create_student,
     delete_student,
     get_student
