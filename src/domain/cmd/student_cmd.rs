@@ -1,13 +1,12 @@
-use serde::{Deserialize, Serialize};
 use crate::api::cmd::IdCommand;
 use crate::api::primitive::students::{Address, Age, ClassId, StuNo, UserName};
+use serde::{Deserialize, Serialize};
 
 
 use crate::api::cmd::student_cmd::{StudentCreateCommand, StudentPageQueryCommand, StudentUpdateCommand};
+use crate::api::primitive::students::{ClassIdQuery, StuNoQuery, UserNameQuery};
 use crate::ddd::core::{DomainModel, DomainPrimitive};
 use crate::ddd::core::{Id, IdOper};
-use crate::api::primitive::students::{ClassIdQuery, StuNoQuery, UserNameQuery};
-use crate::infra::po::student::StudentPO;
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct StudentCreate {
@@ -48,21 +47,6 @@ impl TryFrom<StudentCreateCommand> for StudentCreate {
     }
 }
 
-impl From<StudentCreate> for StudentPO {
-
-    fn from(value: StudentCreate) -> Self {
-        Self {
-            id: None,
-            stu_no: Some(value.stu_no.0),
-            name: Some(value.name.0),
-            age: Some(value.age.0),
-            class_id: Some(value.class_id.0),
-            address: Some(value.address.0),
-        }
-    }
-}
-
-
 
 
 impl DomainModel for IdOper<i64> {
@@ -84,19 +68,6 @@ impl TryFrom<IdCommand<i64>> for IdOper<i64> {
     }
 }
 
-impl From<IdOper<i64>> for StudentPO {
-
-    fn from(value: IdOper<i64>) -> Self {
-        Self {
-            id: Some(value.id.0),
-            stu_no: None,
-            name: None,
-            age: None,
-            class_id: None,
-            address: None,
-        }
-    }
-}
 
 
 
@@ -137,19 +108,6 @@ impl TryFrom<StudentPageQueryCommand> for StudentPageQuery {
     }
 }
 
-
-impl From<StudentPageQuery> for StudentPO {
-    fn from(value: StudentPageQuery) -> Self {
-        Self {
-            id: None,
-            stu_no: value.stu_no.0,
-            name: value.name.0,
-            age: None,
-            class_id: value.class_id.0,
-            address: None,
-        }
-    }
-}
 
 
 
@@ -197,16 +155,3 @@ impl TryFrom<StudentUpdateCommand> for StudentUpdate {
     }
 }
 
-
-impl From<StudentUpdate> for StudentPO {
-    fn from(value: StudentUpdate) -> Self {
-        Self {
-            id: Some(value.id.0),
-            stu_no: None,// 唯一索引， 不能更新此字段
-            name: Some(value.name.0),
-            age: Some(value.age.0),
-            class_id: Some(value.class_id.0),
-            address: Some(value.address.0),
-        }
-    }
-}

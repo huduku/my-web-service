@@ -1,8 +1,9 @@
 use rbatis::htmlsql_select_page;
 use serde::{Deserialize, Serialize};
-use crate::ddd::core::{DomainPrimitive, Id};
+use crate::ddd::core::{DomainPrimitive, Id, IdOper};
 use crate::domain::entity::student::Student;
 use crate::api::primitive::students::{Address, Age, ClassId, StuNo, UserName};
+use crate::domain::cmd::student_cmd::{StudentCreate, StudentPageQuery, StudentUpdate};
 
 #[derive(Clone, Debug, Serialize, Deserialize)]
 pub struct StudentPO {
@@ -26,6 +27,67 @@ impl StudentPO {
 }
 
 
+
+
+impl From<StudentCreate> for StudentPO {
+
+    fn from(value: StudentCreate) -> Self {
+        Self {
+            id: None,
+            stu_no: Some(value.stu_no.0),
+            name: Some(value.name.0),
+            age: Some(value.age.0),
+            class_id: Some(value.class_id.0),
+            address: Some(value.address.0),
+        }
+    }
+}
+
+
+
+impl From<IdOper<i64>> for StudentPO {
+
+    fn from(value: IdOper<i64>) -> Self {
+        Self {
+            id: Some(value.id.0),
+            stu_no: None,
+            name: None,
+            age: None,
+            class_id: None,
+            address: None,
+        }
+    }
+}
+
+
+impl From<StudentPageQuery> for StudentPO {
+    fn from(value: StudentPageQuery) -> Self {
+        Self {
+            id: None,
+            stu_no: value.stu_no.0,
+            name: value.name.0,
+            age: None,
+            class_id: value.class_id.0,
+            address: None,
+        }
+    }
+}
+
+
+
+impl From<StudentUpdate> for StudentPO {
+    fn from(value: StudentUpdate) -> Self {
+        Self {
+            id: Some(value.id.0),
+            stu_no: None,// 唯一索引， 不能更新此字段
+            name: Some(value.name.0),
+            age: Some(value.age.0),
+            class_id: Some(value.class_id.0),
+            address: Some(value.address.0),
+        }
+    }
+}
+
 impl TryFrom<StudentPO> for Student {
     type Error = String;
 
@@ -40,3 +102,6 @@ impl TryFrom<StudentPO> for Student {
         })
     }
 }
+
+
+
