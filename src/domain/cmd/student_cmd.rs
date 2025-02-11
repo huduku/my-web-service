@@ -30,19 +30,12 @@ impl DomainModel for StudentCreate {
 impl TryFrom<StudentCreateCommand> for StudentCreate {
     type Error = String;
     fn try_from(value: StudentCreateCommand) -> Result<Self, Self::Error> {
-
-        let stu_no = StuNo::new(value.stu_no)?;
-        let name =  UserName::new(value.name)?;
-        let age =  Age::new(value.age)?;
-        let class_id =  ClassId::new(value.class_id)?;
-        let address = Address::new(value.address)?;
-
         Ok(Self {
-            stu_no,
-            name,
-            age,
-            class_id,
-            address,
+            stu_no: StuNo::new(value.stu_no)?,
+            name: UserName::new(value.name)?,
+            age: Age::new(value.age)?,
+            class_id: ClassId::new(value.class_id)?,
+            address: Address::new(value.address)?,
         })
     }
 }
@@ -61,10 +54,7 @@ impl DomainModel for IdOper<i64> {
 impl TryFrom<IdCommand<i64>> for IdOper<i64> {
     type Error = String;
     fn try_from(value: IdCommand<i64>) -> Result<Self, Self::Error> {
-        let id = Id::new(value.id)?;
-        Ok(IdOper {
-            id
-        })
+        Ok(IdOper {  id: Id::new(value.id)? })
     }
 }
 
@@ -96,14 +86,10 @@ impl DomainModel for StudentPageQuery {
 impl TryFrom<StudentPageQueryCommand> for StudentPageQuery {
     type Error = String;
     fn try_from(value: StudentPageQueryCommand) -> Result<Self, Self::Error> {
-        let stu_no = StuNoQuery::new(value.stu_no)?;
-        let name = UserNameQuery::new(value.name)?;
-        let class_id = ClassIdQuery::new(value.class_id)?;
-
         Ok(StudentPageQuery {
-            stu_no,
-            name,
-            class_id
+            stu_no: StuNoQuery::new(value.stu_no)?,
+            name: UserNameQuery::new(value.name)?,
+            class_id: ClassIdQuery::new(value.class_id)?
         })
     }
 }
@@ -138,19 +124,12 @@ impl DomainModel for StudentUpdate {
 impl TryFrom<StudentUpdateCommand> for StudentUpdate {
     type Error = String;
     fn try_from(value: StudentUpdateCommand) -> Result<Self, Self::Error> {
-
-        let id = Id::new(value.id)?;
-        let name =  UserName::new(value.name)?;
-        let age =  Age::new(value.age)?;
-        let class_id =  ClassId::new(value.class_id)?;
-        let address = Address::new(value.address)?;
-
         Ok(Self {
-            id,
-            name,
-            age,
-            class_id,
-            address,
+            id: Id::new(value.id)?,
+            name: UserName::new(value.name)?,
+            age: Age::new(value.age)?,
+            class_id: ClassId::new(value.class_id)?,
+            address: Address::new(value.address)?,
         })
     }
 }

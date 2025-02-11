@@ -1,8 +1,7 @@
-
-use crate::pool;
-use axum::response::IntoResponse;
 use crate::api::cmd::IdCommand;
 use crate::domain::cmd::student_cmd::{StudentCreate, StudentPageQuery, StudentUpdate};
+use crate::pool;
+use axum::response::IntoResponse;
 
 use crate::infra::web::req::{ValidForm, ValidJson, ValidQuery};
 
@@ -10,10 +9,8 @@ use crate::api::cmd::student_cmd::{StudentCreateCommand, StudentPageQueryCommand
 use crate::ddd::core::IdOper;
 use crate::ddd::core::PageQuery;
 use crate::ddd::dto::PageReq;
-use crate::domain::repo::student::StudentRepository;
-use crate::infra::repository::student::StudentRepositoryImpl;
-use crate::infra::web::res::JsonRes;
 use crate::domain::service::student_services::{create_student, delete_student, get_student, list_students, update_student};
+use crate::infra::web::res::JsonRes;
 
 pub(crate) async fn get_student_handler(
     ValidQuery(stu, ..): ValidQuery<IdCommand<i64>, IdOper<i64>>,
