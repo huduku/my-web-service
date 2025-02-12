@@ -1,11 +1,11 @@
 
-use crate::ddd::core::{Identifier, Aggregate};
+use crate::ddd::core::{Identifier, Aggregate, DomainPrimitive, DomainModel};
 
 
 pub trait Repository {
 
-    type ID : Identifier;
-    type Aggr: Aggregate<Self::ID>;
+    type ID : DomainPrimitive<i64> + Identifier;
+    type Aggr : DomainModel + Aggregate<Self::ID>;
     
     async fn attach(&self, aggr: Self::Aggr);
 

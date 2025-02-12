@@ -2,26 +2,29 @@
 use crate::api::cmd::IdCommand;
 use crate::api::res::PageRes;
 use crate::ddd::core::{DomainPrimitive, Id, PageQuery};
-use crate::ddd::repo::Repository;
 use crate::domain::cmd::student_cmd::StudentQuery;
 use crate::domain::entity::student::Student;
 use crate::domain::repo::student::StudentRepository;
-use crate::infra::repository::student::StudentRepositoryImpl;
 
-pub struct StudentService {
-    pub(crate) student_repository : StudentRepositoryImpl
+
+
+
+pub struct StudentService<T: StudentRepository<ID=Id<i64>, Aggr=Student>> {
+    pub(crate) student_repository : T
 }
 
-impl StudentService {
+impl<T: StudentRepository<ID=Id<i64>, Aggr=Student>> StudentService<T> {
 
-    pub fn new(student_repository: StudentRepositoryImpl) -> Self {
+    pub fn new(student_repository: T) -> Self {
         Self {
             student_repository
         }
     }
 
     pub async fn get_student(&self, id: IdCommand<i64>) -> Result<Student, String> {
-        self.student_repository.find(Id::new(id.id)?).await
+        let id: Id<i64> = Id::new(id.id)?;
+        // T::ID
+        self.student_repository.find(id).await
     }
     
 

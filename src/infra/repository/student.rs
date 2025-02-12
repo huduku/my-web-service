@@ -27,7 +27,7 @@ impl Repository for StudentRepositoryImpl {
         todo!()
     }
 
-    async fn find(&self, id: Id<i64>) -> Result<Student, String> {
+    async fn find(&self, id: Self::ID) -> Result<Self::Aggr, String> {
         let DbRes(res) = StudentDO::select_by_id(pool!(), id.0).await.into();
         match res {
             Ok(stu) => {
@@ -72,6 +72,10 @@ impl Repository for StudentRepositoryImpl {
 }
 
 impl StudentRepository for StudentRepositoryImpl {
+
+    // type ID = Id<i64>;
+    // type Aggr = Student;
+    
     async fn find_one(&self, stu_no: StuNo) -> Result<Student, String> {
         let DbRes(res)  = 
             StudentDO::select_by_stu_no(pool!(), stu_no.0).await.into();
