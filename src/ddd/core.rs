@@ -65,15 +65,20 @@ impl<T: Send + Sync + Identifier> Identifiable<T> for IdOper<T> {}
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct PageNo(pub u32);
 
-impl DomainPrimitive<u32> for PageNo {
+impl DomainPrimitive<i64> for PageNo {
     type Error = String;
-    fn new(value: Option<u32>) -> Result<Self, Self::Error>
+    fn new(value: Option<i64>) -> Result<Self, Self::Error>
     where
         Self: Sized
     {
         match value {
-            Some(v) => Ok(PageNo(v)),
-            None => Ok(PageNo(1)),
+            Some(v) => {
+                if v > 0 {
+                    return Ok(PageNo(v as u32))
+                }
+                Err("页码必须大于0".to_string())
+            }
+            None => Err("页码不能为空".to_string())
         }
     }
 }
@@ -83,13 +88,18 @@ impl DomainPrimitive<u32> for PageNo {
 pub struct PageSize(pub u16);
 
 
-impl DomainPrimitive<u16> for PageSize {
+impl DomainPrimitive<i32> for PageSize {
 
     type Error = String;
-    fn new(value: Option<u16>) -> Result<Self, String> {
+    fn new(value: Option<i32>) -> Result<Self, String> {
         match value {
-            Some(v) => Ok(PageSize(v)),
-            None => Ok(PageSize(10)),
+            Some(v) => {
+                if v > 0 {
+                    return Ok(PageSize(v as u16))
+                }
+                Err("每页大小必须大于0".to_string())
+            }
+            None => Err("每页大小不能为空".to_string())
         }
     }
 }
@@ -136,24 +146,6 @@ impl<T, DM> TryFrom<PageReq<T>> for PageQuery<DM>
                     }),
                     Err(e) => Err(e),
                 }
-            }
-        }
-    }
-}
-
-
-impl<DM: DomainModel, T: From<DM> + Clone> From<PageQuery<DM>> for PageReq<T> {
-    fn from(value: PageQuery<DM>) -> Self {
-        match value.query {
-            Some(q) => Self {
-                page_no: Some(value.page_no.0),
-                page_size: Some(value.page_size.0),
-                req: Some(q.into())
-            },
-            None => Self {
-                page_no: Some(value.page_no.0),
-                page_size: Some(value.page_size.0),
-                req: None
             }
         }
     }
