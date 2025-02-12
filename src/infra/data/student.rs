@@ -15,9 +15,9 @@ pub struct StudentDO {
     pub address: Option<String>,
 }
 
-rbatis::crud!(StudentDO {});
-rbatis::impl_select!(StudentDO{select_by_id(id: i64) -> Option => "`where id = #{id} limit 1`"});
-rbatis::impl_select!(StudentDO{select_by_stu_no(stu_no: String) -> Option => "`where stu_no = #{stu_no} limit 1`"});
+rbatis::crud!(StudentDO {}, "student");
+rbatis::impl_select!(StudentDO{select_by_id(id: i64) -> Option => "`where id = #{id} limit 1`"}, "student");
+rbatis::impl_select!(StudentDO{select_by_stu_no(stu_no: String) -> Option => "`where stu_no = #{stu_no} limit 1`"}, "student");
 
 impl StudentDO {
     htmlsql_select_page!(select_page(dto:&Option<StudentDO>) -> StudentDO => "src/resources/mapper/student.html");
