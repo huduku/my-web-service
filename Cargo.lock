@@ -1190,6 +1190,7 @@ dependencies = [
 name = "my-web-service"
 version = "0.1.0"
 dependencies = [
+ "async-trait",
  "axum",
  "chrono",
  "fast_log",

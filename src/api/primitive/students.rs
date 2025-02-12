@@ -75,7 +75,7 @@ impl DomainPrimitive<String> for UserName {
     {
         match value {
             Some(v) => Ok(UserName(v)),
-            None => Err("name 不能为空".to_string())
+            None => Err("name 不能为空".to_string()) // Ok(UserName("".to_string()))
         }
     }
 }

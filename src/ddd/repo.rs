@@ -1,15 +1,17 @@
 
 use crate::ddd::core::{Identifier, Aggregate};
+
+// #[async_trait::async_trait]
 pub trait Repository<ID: Identifier, T : Aggregate<ID>> {
 
-    async fn attach(aggr: T);
+    async fn attach(&self, aggr: T);
 
-    async fn detach(aggr: T);
+    async fn detach(&self, aggr: T);
 
-    async fn find(id: ID) ->  Result<T, String>;
+    async fn find(&self, id: ID) ->  Result<T, String>;
 
-    async fn save(aggr: T);
+    async fn save(&self, aggr: T) -> Result<(), String>;
 
-    async fn remove(aggr: T);
+    async fn remove(&self, aggr: T) -> Result<(), String>;
 
 }

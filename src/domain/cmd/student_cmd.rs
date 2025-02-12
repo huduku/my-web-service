@@ -64,7 +64,7 @@ impl TryFrom<IdCommand<i64>> for IdOper<i64> {
 
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
-pub struct StudentPageQuery {
+pub struct StudentQuery {
     // pub page_no: PageNo,
     // pub page_size: PageSize,
     pub stu_no: StuNoQuery,
@@ -72,21 +72,21 @@ pub struct StudentPageQuery {
     pub class_id: ClassIdQuery,
 }
 
-unsafe impl Send for StudentPageQuery {}
-unsafe impl Sync for StudentPageQuery {}
+unsafe impl Send for StudentQuery {}
+unsafe impl Sync for StudentQuery {}
 
-impl DomainModel for StudentPageQuery {
+impl DomainModel for StudentQuery {
     type CQES = StudentPageQueryCommand;
 
     fn new(value: &Self::CQES) -> Result<Self, String> {
-        StudentPageQuery::try_from(value.to_owned())
+        StudentQuery::try_from(value.to_owned())
     }
 }
 
-impl TryFrom<StudentPageQueryCommand> for StudentPageQuery {
+impl TryFrom<StudentPageQueryCommand> for StudentQuery {
     type Error = String;
     fn try_from(value: StudentPageQueryCommand) -> Result<Self, Self::Error> {
-        Ok(StudentPageQuery {
+        Ok(StudentQuery {
             stu_no: StuNoQuery::new(value.stu_no)?,
             name: UserNameQuery::new(value.name)?,
             class_id: ClassIdQuery::new(value.class_id)?
