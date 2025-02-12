@@ -9,14 +9,14 @@ use crate::domain::repo::student::StudentRepository;
 use crate::infra::repository::student::StudentRepositoryImpl;
 
 pub struct StudentService {
-    pub student_repository : dyn StudentRepository<Aggr=Id<i64>, ID=Student>,
+    pub(crate) student_repository : StudentRepositoryImpl
 }
 
 impl StudentService {
 
-    pub fn new() -> Self {
+    pub fn new(student_repository: StudentRepositoryImpl) -> Self {
         Self {
-            student_repository: StudentRepositoryImpl {}
+            student_repository
         }
     }
 

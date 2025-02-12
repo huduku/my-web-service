@@ -3,6 +3,7 @@ use log::LevelFilter;
 use rbatis::intercept_log::LogInterceptor;
 use rbatis::RBatis;
 use crate::domain::service::student_services::StudentService;
+use crate::infra::repository::student::StudentRepositoryImpl;
 
 pub static CONTEXT: LazyLock<ServiceContext> = LazyLock::new(|| ServiceContext::default());
 
@@ -41,7 +42,7 @@ impl Default for ServiceContext {
                 let rb = RBatis::new();
                 rb
             },
-            student_service: StudentService::new()
+            student_service: StudentService::new(StudentRepositoryImpl{})
         }
     }
 }

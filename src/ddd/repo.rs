@@ -1,7 +1,7 @@
 
 use crate::ddd::core::{Identifier, Aggregate};
 
-// #[async_trait::async_trait]
+
 pub trait Repository {
 
     type ID : Identifier;
