@@ -8,25 +8,14 @@ use crate::domain::repo::student::StudentRepository;
 use crate::ddd::repo::Repository;
 use crate::infra::data::student::StudentDO;
 use crate::infra::repository::DbRes;
+
 use crate::pool;
 use axum::extract::FromRef;
-use rbatis::{Page, PageRequest, RBatis};
+use rbatis::{Page, PageRequest};
 
+pub struct StudentRepositoryImpl {}
 
-pub struct StudentRepositoryImpl<'a> {
-    rb: &'a RBatis,
-}
-
-
-impl<'a> StudentRepositoryImpl<'a> {
-    pub fn new() -> Self {
-        Self {
-            rb: pool!()
-        }
-    }
-}
-
-impl Repository<Id<i64>, Student> for StudentRepositoryImpl<'_> {
+impl Repository<Id<i64>, Student> for StudentRepositoryImpl {
     async fn attach(&self, aggr: Student) {
         todo!()
     }
@@ -36,7 +25,7 @@ impl Repository<Id<i64>, Student> for StudentRepositoryImpl<'_> {
     }
 
     async fn find(&self, id: Id<i64>) -> Result<Student, String> {
-        let DbRes(res) = StudentDO::select_by_id(self.rb, id.0).await.into();
+        let DbRes(res) = StudentDO::select_by_id(pool!(), id.0).await.into();
         match res {
             Ok(stu) => {
                 match stu {
@@ -49,25 +38,40 @@ impl Repository<Id<i64>, Student> for StudentRepositoryImpl<'_> {
     }
 
     async fn save(&self, stu: Student) -> Result<(), String> {
-        let data: StudentDO = stu.into();
-        let res = StudentDO::insert(self.rb, &data).await;
+        let res = match stu.id { 
+            Some(_) => StudentDO::update_by_column(pool!(), &stu.into(), "id").await,
+            None => StudentDO::insert(pool!(), &stu.into()).await,
+        };
+        
         match res {
-            Ok(_) => {
-                Ok(())
+            Ok(r) => {
+                if r.rows_affected == 1 {
+                    return Ok(())
+                }
+                Err("操作失败".to_string())
             },
             Err(e) => Err(e.to_string())
         }
     }
 
-    async fn remove(&self, aggr: Student) -> Result<(), String> {
-        todo!()
+    async fn remove(&self, id: Id<i64>) -> Result<(), String> {
+        let res = StudentDO::delete_by_column(pool!(), "id", id.0).await;
+        match res {
+            Ok(r) => {
+                if r.rows_affected == 1 {
+                    return Ok(())
+                }
+                Err("数据不存在".to_string())
+            },
+            Err(e) => Err(e.to_string())
+        }
     }
 }
 
-impl StudentRepository for StudentRepositoryImpl<'_> {
+impl StudentRepository for StudentRepositoryImpl {
     async fn find_one(&self, stu_no: StuNo) -> Result<Student, String> {
         let DbRes(res)  = 
-            StudentDO::select_by_stu_no(self.rb, stu_no.0).await.into();
+            StudentDO::select_by_stu_no(pool!(), stu_no.0).await.into();
         match res {
             Ok(stu) => {
                 match stu {
@@ -83,7 +87,7 @@ impl StudentRepository for StudentRepositoryImpl<'_> {
         let page: PageRequest = PageRequest::from_ref(&page_query);
         let stu = page_query.query.map(|q| q.into());
         let DbRes(db_res) =  
-            DbRes::<Page<StudentDO>>::from(StudentDO::select_page(self.rb, &page, &stu).await);
+            DbRes::<Page<StudentDO>>::from(StudentDO::select_page(pool!(), &page, &stu).await);
         match db_res { 
             Ok(res) => Ok(PageRes::<Student>::try_from(res)?),
             Err(e) => Err(e)

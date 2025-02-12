@@ -12,6 +12,6 @@ pub trait Repository<ID: Identifier, T : Aggregate<ID>> {
 
     async fn save(&self, aggr: T) -> Result<(), String>;
 
-    async fn remove(&self, aggr: T) -> Result<(), String>;
+    async fn remove(&self, aggr: ID) -> Result<(), String>;
 
 }

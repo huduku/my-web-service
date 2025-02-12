@@ -2,6 +2,7 @@ use std::sync::LazyLock;
 use log::LevelFilter;
 use rbatis::intercept_log::LogInterceptor;
 use rbatis::RBatis;
+use crate::domain::service::student_services::StudentService;
 
 pub static CONTEXT: LazyLock<ServiceContext> = LazyLock::new(|| ServiceContext::default());
 
@@ -15,6 +16,7 @@ macro_rules! pool {
 
 pub struct ServiceContext {
     pub rb: RBatis,
+    pub student_service: StudentService
 }
 
 impl ServiceContext {
@@ -39,6 +41,7 @@ impl Default for ServiceContext {
                 let rb = RBatis::new();
                 rb
             },
+            student_service: StudentService::new()
         }
     }
 }
