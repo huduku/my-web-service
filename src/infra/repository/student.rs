@@ -15,7 +15,10 @@ use rbatis::{Page, PageRequest};
 
 pub struct StudentRepositoryImpl {}
 
-impl Repository<Id<i64>, Student> for StudentRepositoryImpl {
+impl Repository for StudentRepositoryImpl {
+    type ID = Id<i64>;
+    type Aggr = Student;
+
     async fn attach(&self, aggr: Student) {
         todo!()
     }

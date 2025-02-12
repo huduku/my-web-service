@@ -1,3 +1,4 @@
+
 use crate::api::cmd::IdCommand;
 use crate::api::res::PageRes;
 use crate::ddd::core::{DomainPrimitive, Id, PageQuery};
@@ -8,7 +9,7 @@ use crate::domain::repo::student::StudentRepository;
 use crate::infra::repository::student::StudentRepositoryImpl;
 
 pub struct StudentService {
-    pub student_repository : StudentRepositoryImpl,
+    pub student_repository : dyn StudentRepository<Aggr=Id<i64>, ID=Student>,
 }
 
 impl StudentService {
