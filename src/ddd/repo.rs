@@ -4,7 +4,10 @@ use crate::ddd::core::{Identifier, Aggregate, DomainPrimitive, DomainModel};
 
 pub trait Repository : Sized {
 
+    /// 底层数据库原生的类型
     type RawId: Debug + Clone + Send + Sync;
+    
+    /// Domain Primitive 的 Id， 可以用来做校验防御逻辑
     type Id: DomainPrimitive<Self::RawId> + Identifier;
     type Aggr : DomainModel + Aggregate<Self::Id>;
     

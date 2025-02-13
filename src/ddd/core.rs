@@ -1,4 +1,4 @@
-use std::marker::PhantomData;
+// use std::marker::PhantomData;
 use std::fmt::Debug;
 use serde::{Deserialize, Serialize};
 use crate::ddd::dto::{MultipartFile, PageReq};
@@ -53,20 +53,6 @@ impl DomainPrimitive<i64> for Id<i64> {
         }
     }
 }
-
-// #[derive(Debug, Serialize, Deserialize, Clone)]
-// pub struct IdOper<R, T>
-// where
-//     R: Send + Sync + Debug + Clone,
-//     T: Send + Sync + Identifier + DomainPrimitive<R> {
-//     pub id: T,
-//     #[serde(skip)] // 避免 `PhantomData` 影响序列化
-//     _marker: PhantomData<R>,
-// }
-// impl<R, T> Identifiable<T> for IdOper<R, T> 
-// where R:  Send + Sync + Debug + Clone,
-//     T: Send + Sync + Identifier + DomainPrimitive<R>
-// {}
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct IdOper<T>

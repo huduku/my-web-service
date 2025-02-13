@@ -1,10 +1,7 @@
 use crate::api::primitive::students::{Address, Age, ClassId, StuNo, UserName};
-use crate::ddd::core::{Aggregate, Entity, Id, IdOper, Identifiable};
-use serde::{Deserialize, Serialize};
+use crate::ddd::core::{Aggregate, Entity, Id, Identifiable};
 use crate::domain::cmd::student_cmd::{StudentCreate, StudentUpdate};
-
-
-
+use serde::{Deserialize, Serialize};
 
 
 #[derive(Clone, Debug, Serialize, Deserialize)]
