@@ -6,13 +6,13 @@ use crate::domain::cmd::student_cmd::StudentQuery;
 use crate::domain::entity::student::Student;
 use crate::domain::repo::student::StudentRepository;
 
-pub struct StudentService<T: StudentRepository> {
-    pub(crate) student_repository : T
+pub struct StudentService<T: StudentRepository + 'static> {
+    pub(crate) student_repository : &'static T
 }
 
-impl<T: StudentRepository> StudentService<T> {
+impl<T: StudentRepository + 'static> StudentService<T> {
 
-    pub fn new(student_repository: T) -> Self {
+    pub fn new(student_repository: &'static T) -> Self {
         Self {
             student_repository
         }

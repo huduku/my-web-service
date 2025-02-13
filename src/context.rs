@@ -2,7 +2,7 @@ use std::sync::LazyLock;
 use log::LevelFilter;
 use rbatis::intercept_log::LogInterceptor;
 use rbatis::RBatis;
-use crate::app::srv::container::AppSrvContainer;
+use crate::app::context::srv::AppSrvContainer;
 
 
 pub static CONTEXT: LazyLock<ServiceContext> = LazyLock::new(ServiceContext::default);
