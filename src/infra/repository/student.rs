@@ -3,7 +3,7 @@ use crate::api::res::PageRes;
 use crate::ddd::core::{DomainModel, Id, PageQuery};
 use crate::domain::cmd::student_cmd::StudentQuery;
 use crate::domain::entity::student::Student;
-use crate::domain::repo::student::StudentRepository;
+use crate::domain::repo::student::{StudentRepo, StudentRepository};
 
 use crate::ddd::repo::Repository;
 use crate::infra::data::student::StudentDO;
@@ -12,6 +12,7 @@ use crate::infra::repository::DbRes;
 use crate::pool;
 use axum::extract::FromRef;
 use rbatis::{Page, PageRequest};
+
 
 pub struct StudentRepositoryImpl {}
 
@@ -104,4 +105,8 @@ impl StudentRepository for StudentRepositoryImpl {
     async fn count(&self, query: StudentQuery) -> Result<u64, String> {
         todo!()
     }
+}
+
+impl StudentRepo for StudentRepositoryImpl {
+    
 }
