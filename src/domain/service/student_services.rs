@@ -6,10 +6,6 @@ use crate::domain::cmd::student_cmd::StudentQuery;
 use crate::domain::entity::student::Student;
 use crate::domain::repo::student::StudentRepository;
 
-
-
-
-
 pub struct StudentService<T: StudentRepository> {
     pub(crate) student_repository : T
 }
@@ -22,10 +18,8 @@ impl<T: StudentRepository> StudentService<T> {
         }
     }
 
-    pub async fn get_student(&self, id: IdCommand<i64>) -> Result<Student, String> {
-        let id: Id<i64> = Id::new(id.id)?;
-        // T::ID
-        self.student_repository.find(id).await
+    pub async fn get_student(&self, id: IdCommand<i64>) -> Result<Student, String> { // T::ID
+        self.student_repository.find(Id::new(id.id)?).await
     }
     
 

@@ -17,7 +17,9 @@ use rbatis::{Page, PageRequest};
 pub struct StudentRepositoryImpl {}
 
 impl Repository for StudentRepositoryImpl {
-    type ID = Id<i64>;
+    
+    type Id = i64;
+    type IdGuard = Id<i64>;
     type Aggr = Student;
 
     async fn attach(&self, aggr: Student) {
@@ -28,7 +30,7 @@ impl Repository for StudentRepositoryImpl {
         todo!()
     }
 
-    async fn find(&self, id: Self::ID) -> Result<Self::Aggr, String> {
+    async fn find(&self, id: Self::IdGuard) -> Result<Self::Aggr, String> {
         let DbRes(res) = StudentDO::select_by_id(pool!(), id.0).await.into();
         match res {
             Ok(stu) => {

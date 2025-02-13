@@ -1,18 +1,28 @@
-
+use std::marker::PhantomData;
+use std::fmt::Debug;
 use serde::{Deserialize, Serialize};
 use crate::ddd::dto::{MultipartFile, PageReq};
 
+pub trait Identifier{}
+pub trait Identifiable<ID: Identifier> {}
+
+pub trait Entity<ID: Identifier>  : Identifiable<ID> {}
+
+pub trait Aggregate<ID: Identifier>  : Entity<ID> {}
+
+
+
 /// CQES: command , query, event, store
-pub trait DomainPrimitive<T> : Clone + Send + Sync
-    where T: Clone + Send + Sync
+pub trait DomainPrimitive<T> : Sized + Debug + Clone + Send + Sync
+    where T: Sized + Debug + Clone + Send + Sync
 {
     type Error;
     
     fn new(value: Option<T>) -> Result<Self, Self::Error> where Self: Sized;
 }
 
-pub trait DomainModel : Sized + Clone + Send + Sync{
-    type CQES : Clone + Send + Sync;
+pub trait DomainModel : Sized + Debug + Clone + Send + Sync{
+    type CQES : Sized + Debug + Clone + Send + Sync;
     fn new(value: &Self::CQES) -> Result<Self, String>;
 }
 
@@ -21,12 +31,7 @@ pub trait MultipartDomainModel : DomainModel
     fn new(value: &Self::CQES, multipart_files: Vec<MultipartFile>) -> Result<Self, String>;
 }
 
-pub trait Identifier{}
-pub trait Identifiable<ID: Identifier> {}
 
-pub trait Entity<ID: Identifier>  : Identifiable<ID> {}
-
-pub trait Aggregate<ID: Identifier>  : Entity<ID> {}
 
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
@@ -49,17 +54,26 @@ impl DomainPrimitive<i64> for Id<i64> {
     }
 }
 
+// #[derive(Debug, Serialize, Deserialize, Clone)]
+// pub struct IdOper<R, T>
+// where
+//     R: Send + Sync + Debug + Clone,
+//     T: Send + Sync + Identifier + DomainPrimitive<R> {
+//     pub id: T,
+//     #[serde(skip)] // 避免 `PhantomData` 影响序列化
+//     _marker: PhantomData<R>,
+// }
+// impl<R, T> Identifiable<T> for IdOper<R, T> 
+// where R:  Send + Sync + Debug + Clone,
+//     T: Send + Sync + Identifier + DomainPrimitive<R>
+// {}
+
 #[derive(Debug, Serialize, Deserialize, Clone)]
-pub struct IdOper<T> where T: Send + Sync + Identifier {
+pub struct IdOper<T>
+where T: Debug + Clone + Send + Sync   {
     pub id: Id<T>
 }
-
-impl Identifier for i64 {}
-unsafe impl   Send  for IdOper<i64> {}
-unsafe impl   Sync  for IdOper<i64>  {}
-
-impl<T: Send + Sync + Identifier> Identifiable<T> for IdOper<T> {}
-
+impl<T: Debug + Clone + Send + Sync> Identifiable<Id<T>> for IdOper<T> {}
 
 
 #[derive(Debug, Serialize, Deserialize, Clone)]

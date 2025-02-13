@@ -6,8 +6,7 @@ use crate::infra::web::req::{ValidForm, ValidJson, ValidQuery};
 
 use crate::api::cmd::student_cmd::{StudentCreateCommand, StudentPageQueryCommand, StudentUpdateCommand};
 use crate::context::CONTEXT;
-use crate::ddd::core::IdOper;
-use crate::ddd::core::PageQuery;
+use crate::ddd::core::{IdOper, PageQuery};
 use crate::ddd::dto::PageReq;
 use crate::infra::web::res::JsonRes;
 
@@ -16,7 +15,7 @@ pub(crate) async fn get_student_handler(
     ValidQuery(id_query,_): ValidQuery<IdCommand<i64>, IdOper<i64>>,
 ) -> impl IntoResponse {
     let student_service = &CONTEXT.student_service;
-    let res = student_service.get_student(id_query).await.into();
+    let res = student_service.get_student(id_query).await;
     JsonRes(res)
 }
 

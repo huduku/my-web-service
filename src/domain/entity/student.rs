@@ -1,7 +1,11 @@
 use crate::api::primitive::students::{Address, Age, ClassId, StuNo, UserName};
-use crate::ddd::core::{Aggregate, Entity, Id, Identifiable};
+use crate::ddd::core::{Aggregate, Entity, Id, IdOper, Identifiable};
 use serde::{Deserialize, Serialize};
 use crate::domain::cmd::student_cmd::{StudentCreate, StudentUpdate};
+
+
+
+
 
 #[derive(Clone, Debug, Serialize, Deserialize)]
 pub struct Student {
@@ -13,6 +17,7 @@ pub struct Student {
     pub address: Address,
     
 }
+
 
 
 impl Identifiable<Id<i64>> for Student {}

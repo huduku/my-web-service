@@ -5,7 +5,7 @@ use crate::ddd::repo::Repository;
 use crate::domain::cmd::student_cmd::StudentQuery;
 use crate::domain::entity::student::Student;
 
-pub trait StudentRepository : Repository<ID=Id<i64>, Aggr=Student> {
+pub trait StudentRepository : Repository<Id=i64, IdGuard=Id<i64>, Aggr=Student> {
     
     async fn find_one(&self, stu_no: StuNo) -> Result<Student, String>;
     
