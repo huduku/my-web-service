@@ -66,6 +66,7 @@ impl DomainPrimitive<i64> for Id<i64> {
 pub struct IdOper<T: Safes>  {
     pub id: Id<T>
 }
+impl<T: Safes> Safes for IdOper<T> {}
 impl<T: Safes> Identifiable<Id<T>> for IdOper<T> {}
 
 
@@ -126,10 +127,9 @@ unsafe impl<DM> Sync for PageQuery<DM> where DM: DomainModel  {}
 
 impl<DM: DomainModel> Safes for PageQuery<DM> {}
 
-impl<DM: DomainModel> Safes for PageReq<DM> {}
+impl<T: Safes> Safes for PageReq<T> {}
 
-impl<DM> DomainModel for PageQuery<DM> 
-    where DM: DomainModel, <DM as DomainModel>::CQES: DomainModel {
+impl<DM: DomainModel> DomainModel for PageQuery<DM> {
     type CQES = PageReq<DM::CQES>;
 
     fn new(value: &PageReq<DM::CQES>) -> Result<Self, String> {
@@ -138,8 +138,7 @@ impl<DM> DomainModel for PageQuery<DM>
 }
 
 impl<T, DM> TryFrom<PageReq<T>> for PageQuery<DM> 
-    where T: Clone,
-    DM: DomainModel<CQES=T> + Clone + Send + Sync
+    where  DM: DomainModel<CQES=T>
 {
     type Error = String;
     fn try_from(value: PageReq<T>) -> Result<Self, Self::Error> {

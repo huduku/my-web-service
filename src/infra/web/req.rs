@@ -17,7 +17,7 @@ impl<T, S, DM> FromRequest<S> for ValidJson<T, DM>
 where
     S: Send + Sync,
     T: Serialize + DeserializeOwned + Clone + 'static, // 确保 T 可以解析
-    DM: Clone + Send + Sync + DomainModel<CQES=T> + TryFrom<T> +  'static,  // 确保 U 可以进行校验
+    DM: DomainModel<CQES=T> + TryFrom<T> +  'static,  // 确保 U 可以进行校验
 {
     type Rejection = Res<String>;
     async fn from_request(req: Request, state: &S) -> Result<Self, Self::Rejection> {
@@ -48,7 +48,7 @@ impl<T, S, DM> FromRequest<S> for ValidQuery<T, DM>
 where
     S: Send + Sync,
     T: Serialize + DeserializeOwned + Clone + 'static, // 确保 T 可以解析
-    DM: Clone + Send + Sync + DomainModel<CQES=T> + TryFrom<T> +  'static,  // 确保 U 可以进行校验
+    DM: DomainModel<CQES=T> + TryFrom<T> +  'static,  // 确保 U 可以进行校验
 {
     type Rejection = Res<String>;
 
@@ -81,7 +81,7 @@ impl<S, T, DM> FromRequest<S> for ValidFile<T, DM>
 where
     S: Send + Sync,
     T: Serialize + DeserializeOwned + Clone + 'static, // 确保 T 可以解析
-    DM: Clone + Send + Sync + MultipartDomainModel<CQES=T> + TryFrom<T> +  'static,  // 确保 U 可以进行校验
+    DM:  MultipartDomainModel<CQES=T> + TryFrom<T> +  'static,  // 确保 U 可以进行校验
 {
     type Rejection = Res<String>;
 

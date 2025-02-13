@@ -5,7 +5,7 @@ use serde::{Deserialize, Serialize};
 
 use crate::api::cmd::student_cmd::{StudentCreateCommand, StudentPageQueryCommand, StudentUpdateCommand};
 use crate::api::primitive::students::{ClassIdQuery, StuNoQuery, UserNameQuery};
-use crate::ddd::core::{DomainModel, DomainPrimitive};
+use crate::ddd::core::{DomainModel, DomainPrimitive, Safes};
 use crate::ddd::core::{Id, IdOper};
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
@@ -19,6 +19,8 @@ pub struct StudentCreate {
 
 unsafe impl Send for StudentCreate {}
 unsafe impl Sync for StudentCreate {}
+
+impl Safes for StudentCreate {}
 
 impl DomainModel for StudentCreate {
     type CQES = StudentCreateCommand;
@@ -74,6 +76,7 @@ pub struct StudentQuery {
 
 unsafe impl Send for StudentQuery {}
 unsafe impl Sync for StudentQuery {}
+impl Safes for StudentQuery {}
 
 impl DomainModel for StudentQuery {
     type CQES = StudentPageQueryCommand;
@@ -112,6 +115,7 @@ pub struct StudentUpdate {
 unsafe impl Send for StudentUpdate {}
 unsafe impl Sync for StudentUpdate {}
 
+impl Safes for StudentUpdate {}
 
 impl DomainModel for StudentUpdate {
 

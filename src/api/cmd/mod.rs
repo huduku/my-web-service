@@ -1,4 +1,5 @@
 use serde::{Deserialize, Serialize};
+use crate::ddd::core::Safes;
 
 pub mod student_cmd;
 
@@ -7,3 +8,5 @@ pub mod student_cmd;
 pub struct IdCommand<T> where T: Clone  {
     pub id: Option<T>
 }
+
+impl<T: Safes> Safes for  IdCommand<T> {}

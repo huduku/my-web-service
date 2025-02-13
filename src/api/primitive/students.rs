@@ -1,32 +1,41 @@
 
 use serde::{Deserialize, Serialize};
 use unicode_segmentation::UnicodeSegmentation;
-use crate::ddd::core::DomainPrimitive;
+use crate::ddd::core::{DomainPrimitive, Safes};
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct StuNo(pub String);
+impl Safes for StuNo {}
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct StuNoQuery(pub Option<String>);
+impl Safes for StuNoQuery {}
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct UserName(pub String);
+impl Safes for UserName {}
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct UserNameQuery(pub Option<String>);
+impl Safes for UserNameQuery {}
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct Age(pub u16);
+impl Safes for Age {}
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct ClassId(pub u32);
+impl Safes for ClassId {}
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct ClassIdQuery(pub Option<u32>);
+impl Safes for ClassIdQuery {}
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct Address(pub String);
+impl Safes for Address {}
 
+impl Safes for String {}
 
 impl DomainPrimitive<String> for StuNo {
 
@@ -98,7 +107,7 @@ impl DomainPrimitive<String> for UserNameQuery {
     }
 }
 
-
+impl Safes for u16 {}
 impl DomainPrimitive<u16> for Age {
     type Error = String;
     fn new(value: Option<u16>) -> Result<Self, String> {
@@ -113,6 +122,8 @@ impl DomainPrimitive<u16> for Age {
         }
     }
 }
+
+impl Safes for u32 {}
 
 impl DomainPrimitive<u32> for ClassId {
     type Error = String;

@@ -1,6 +1,6 @@
 use rbatis::htmlsql_select_page;
 use serde::{Deserialize, Serialize};
-use crate::ddd::core::{DomainModel, DomainPrimitive, Id, IdOper};
+use crate::ddd::core::{DomainModel, DomainPrimitive, Id, IdOper, Safes};
 use crate::domain::entity::student::Student;
 use crate::api::primitive::students::{Address, Age, ClassId, StuNo, UserName};
 use crate::domain::cmd::student_cmd::{StudentCreate, StudentQuery, StudentUpdate};
@@ -22,6 +22,8 @@ rbatis::impl_select!(StudentDO{select_by_stu_no(stu_no: String) -> Option => "`w
 impl StudentDO {
     htmlsql_select_page!(select_page(dto:&Option<StudentDO>) -> StudentDO => "src/resources/mapper/student.html");
 }
+
+impl Safes for StudentDO {}
 
 
 impl From<StudentCreate> for StudentDO {

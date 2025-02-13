@@ -1,11 +1,11 @@
-use std::fmt::Debug;
-use crate::ddd::core::{Identifier, Aggregate, DomainPrimitive, DomainModel};
+
+use crate::ddd::core::{Identifier, Aggregate, DomainPrimitive, DomainModel, Safes};
 
 
 pub trait Repository : Sized {
 
     /// 底层数据库原生的类型
-    type RawId: Debug + Clone + Send + Sync;
+    type RawId: Safes;
     
     /// Domain Primitive 的 Id， 可以用来做校验防御逻辑
     type Id: DomainPrimitive<Self::RawId> + Identifier;
