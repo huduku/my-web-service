@@ -1,5 +1,5 @@
 use crate::api::primitive::students::{Address, Age, ClassId, StuNo, UserName};
-use crate::ddd::core::{Aggregate, Entity, Id, Identifiable};
+use crate::ddd::core::{Aggregate, Entity, Id, Identifiable, Safes};
 use crate::domain::cmd::student_cmd::{StudentCreate, StudentUpdate};
 use serde::{Deserialize, Serialize};
 
@@ -20,6 +20,8 @@ pub struct Student {
 impl Identifiable<Id<i64>> for Student {}
 impl Entity<Id<i64>> for Student {}
 impl Aggregate<Id<i64>> for Student {}
+
+impl Safes for Student {}
 
 impl From<StudentCreate> for Student {
     fn from(value: StudentCreate) -> Self {
