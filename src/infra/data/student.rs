@@ -114,7 +114,7 @@ impl TryFrom<StudentDO> for Student {
 impl From<Student> for StudentDO {
     fn from(value: Student) -> Self {
         Self {
-            id: match value.id { Some(v)=> Some(v.0), None=> None },
+            id: value.id.map(|v| v.0),
             stu_no: match value.stu_no { Some(v)=> Some(v.0), None=> None },// 唯一索引， 不能更新此字段
             name: Some(value.name.0),
             age: Some(value.age.0),
