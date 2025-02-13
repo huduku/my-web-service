@@ -4,17 +4,17 @@ use crate::api::res::PageRes;
 use crate::ddd::core::{DomainPrimitive, Id, PageQuery};
 use crate::domain::cmd::student_cmd::StudentQuery;
 use crate::domain::entity::student::Student;
-use crate::domain::repo::student::{StudentRepo, StudentRepository};
+use crate::domain::repo::student::StudentRepository;
 
 
 
 
 
-pub struct StudentService<T: StudentRepo> {
+pub struct StudentService<T: StudentRepository> {
     pub(crate) student_repository : T
 }
 
-impl<T: StudentRepo> StudentService<T> {
+impl<T: StudentRepository> StudentService<T> {
 
     pub fn new(student_repository: T) -> Self {
         Self {

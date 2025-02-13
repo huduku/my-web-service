@@ -2,7 +2,7 @@ use std::sync::LazyLock;
 use log::LevelFilter;
 use rbatis::intercept_log::LogInterceptor;
 use rbatis::RBatis;
-use crate::domain::repo::student::StudentRepo;
+use crate::domain::repo::student::StudentRepository;
 use crate::domain::service::student_services::StudentService;
 use crate::infra::repository::student::StudentRepositoryImpl;
 
@@ -16,12 +16,12 @@ macro_rules! pool {
 }
 
 
-pub struct ServiceContext<T: StudentRepo> {
+pub struct ServiceContext<T: StudentRepository> {
     pub rb: RBatis,
     pub student_service: StudentService<T>
 }
 
-impl<T: StudentRepo> ServiceContext<T> {
+impl<T: StudentRepository> ServiceContext<T> {
     pub async fn init_db(&self) {
         self.rb.init(
             rbdc_mysql::driver::MysqlDriver {},

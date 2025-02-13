@@ -5,10 +5,7 @@ use crate::domain::entity::student::Student;
 use crate::api::primitive::students::StuNo;
 use crate::ddd::repo::Repository;
 
-pub trait StudentRepository : Repository {
-
-    // type ID : DomainPrimitive<i64> + Identifier;
-    // type Aggr : DomainModel + Aggregate<Self::ID>;
+pub trait StudentRepository : Repository<ID=Id<i64>, Aggr=Student> {
     
     async fn find_one(&self, stu_no: StuNo) -> Result<Student, String>;
     
@@ -19,4 +16,4 @@ pub trait StudentRepository : Repository {
 }
 
 
-pub trait StudentRepo : StudentRepository<ID=Id<i64>, Aggr=Student> {}
+// pub trait StudentRepo : StudentRepository<ID=Id<i64>, Aggr=Student> {}
