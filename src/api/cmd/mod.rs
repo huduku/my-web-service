@@ -1,11 +1,11 @@
 use serde::{Deserialize, Serialize};
-use crate::ddd::core::Safes;
+use crate::ddd::safe::Safes;
 
 pub mod student_cmd;
 
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
-pub struct IdCommand<T> where T: Clone  {
+pub struct IdCommand<T> where T: Safes  {
     pub id: Option<T>
 }
 

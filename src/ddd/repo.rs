@@ -1,6 +1,6 @@
 
-use crate::ddd::core::{Identifier, Aggregate, DomainPrimitive, DomainModel, Safes};
-
+use crate::ddd::core::{Identifier, Aggregate, DomainPrimitive, DomainModel};
+use crate::ddd::safe::Safes;
 
 pub trait Repository : Sized {
 

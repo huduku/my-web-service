@@ -1,7 +1,8 @@
 
 use serde::{Deserialize, Serialize};
 use unicode_segmentation::UnicodeSegmentation;
-use crate::ddd::core::{DomainPrimitive, Safes};
+use crate::ddd::core::DomainPrimitive;
+use crate::ddd::safe::Safes;
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct StuNo(pub String);
@@ -35,7 +36,7 @@ impl Safes for ClassIdQuery {}
 pub struct Address(pub String);
 impl Safes for Address {}
 
-impl Safes for String {}
+
 
 impl DomainPrimitive<String> for StuNo {
 
@@ -107,7 +108,7 @@ impl DomainPrimitive<String> for UserNameQuery {
     }
 }
 
-impl Safes for u16 {}
+
 impl DomainPrimitive<u16> for Age {
     type Error = String;
     fn new(value: Option<u16>) -> Result<Self, String> {
@@ -123,7 +124,7 @@ impl DomainPrimitive<u16> for Age {
     }
 }
 
-impl Safes for u32 {}
+
 
 impl DomainPrimitive<u32> for ClassId {
     type Error = String;

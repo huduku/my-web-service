@@ -5,8 +5,9 @@ use serde::{Deserialize, Serialize};
 
 use crate::api::cmd::student_cmd::{StudentCreateCommand, StudentPageQueryCommand, StudentUpdateCommand};
 use crate::api::primitive::students::{ClassIdQuery, StuNoQuery, UserNameQuery};
-use crate::ddd::core::{DomainModel, DomainPrimitive, Safes};
+use crate::ddd::core::{DomainModel, DomainPrimitive};
 use crate::ddd::core::{Id, IdOper};
+use crate::ddd::safe::Safes;
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct StudentCreate {

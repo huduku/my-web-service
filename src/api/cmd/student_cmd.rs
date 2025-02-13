@@ -1,5 +1,5 @@
 use serde::{Deserialize, Serialize};
-use crate::ddd::core::Safes;
+use crate::ddd::safe::Safes;
 
 #[derive(Clone, Debug, Serialize, Deserialize)]
 pub struct StudentCreateCommand {

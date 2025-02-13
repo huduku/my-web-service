@@ -1,8 +1,9 @@
 use rbatis::htmlsql_select_page;
 use serde::{Deserialize, Serialize};
-use crate::ddd::core::{DomainModel, DomainPrimitive, Id, IdOper, Safes};
+use crate::ddd::core::{DomainModel, DomainPrimitive, Id, IdOper};
 use crate::domain::entity::student::Student;
 use crate::api::primitive::students::{Address, Age, ClassId, StuNo, UserName};
+use crate::ddd::safe::Safes;
 use crate::domain::cmd::student_cmd::{StudentCreate, StudentQuery, StudentUpdate};
 
 #[derive(Clone, Debug, Serialize, Deserialize)]

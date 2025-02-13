@@ -2,8 +2,7 @@
 use std::fmt::Debug;
 use serde::{Deserialize, Serialize};
 use crate::ddd::dto::{MultipartFile, PageReq};
-
-pub trait Safes : Sized + Debug + Clone + Send + Sync {}
+use crate::ddd::safe::Safes;
 
 pub trait Identifier{}
 pub trait Identifiable<ID: Identifier> {}
@@ -42,10 +41,10 @@ pub trait MultipartDomainModel : DomainModel
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct Id<T>(pub T);
 
-impl<T> Safes for Id<T> where T: Safes {}
+
 impl<T> Identifier for Id<T> {}
 
-impl Safes for i64 {}
+
 
 impl DomainPrimitive<i64> for Id<i64> {
     type Error = String;
@@ -66,14 +65,12 @@ impl DomainPrimitive<i64> for Id<i64> {
 pub struct IdOper<T: Safes>  {
     pub id: Id<T>
 }
-impl<T: Safes> Safes for IdOper<T> {}
-impl<T: Safes> Identifiable<Id<T>> for IdOper<T> {}
 
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct PageNo(pub u32);
 
-impl Safes for PageNo {}
+
 impl DomainPrimitive<i64> for PageNo {
     type Error = String;
     fn new(value: Option<i64>) -> Result<Self, Self::Error>
@@ -96,8 +93,7 @@ impl DomainPrimitive<i64> for PageNo {
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct PageSize(pub u16);
 
-impl Safes for i32 {}
-impl Safes for PageSize {}
+
 impl DomainPrimitive<i32> for PageSize {
 
     type Error = String;
@@ -124,10 +120,6 @@ pub struct PageQuery<DM: DomainModel> {
 
 unsafe impl<DM> Send for PageQuery<DM> where DM: DomainModel  {}
 unsafe impl<DM> Sync for PageQuery<DM> where DM: DomainModel  {}
-
-impl<DM: DomainModel> Safes for PageQuery<DM> {}
-
-impl<T: Safes> Safes for PageReq<T> {}
 
 impl<DM: DomainModel> DomainModel for PageQuery<DM> {
     type CQES = PageReq<DM::CQES>;
