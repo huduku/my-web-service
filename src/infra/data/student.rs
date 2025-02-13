@@ -98,10 +98,7 @@ impl TryFrom<StudentDO> for Student {
 
     fn try_from(value: StudentDO) -> Result<Self, Self::Error> {
         Ok(Self {
-            id: match value.id { 
-                Some(id)=> Some(Id(id)),
-                None => None
-            },
+            id: value.id.map(Id),
             stu_no: Some(StuNo::new(value.stu_no)?),
             name: UserName::new(value.name)?,
             age: Age::new(value.age)?,
