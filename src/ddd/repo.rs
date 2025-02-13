@@ -9,6 +9,8 @@ pub trait Repository : Sized {
     
     /// Domain Primitive 的 Id， 可以用来做校验防御逻辑
     type Id: DomainPrimitive<Self::RawId> + Identifier;
+    
+    /// 聚合： 实体类，属于领域模型
     type Aggr : DomainModel + Aggregate<Self::Id>;
     
     async fn attach(&self, aggr: Self::Aggr);
