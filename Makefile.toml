@@ -1,0 +1,28 @@
+[env]
+PROJECT_NAME = "my-web-service"
+BUILD_DIR = "target/release"
+DEPLOY_DIR = "deploy"
+
+[tasks.build]
+command = "cargo"
+args = ["build", "--release"]
+
+[tasks.prepare-deploy]
+script = '''
+mkdir -p ${DEPLOY_DIR}
+cp ${BUILD_DIR}/${PROJECT_NAME} ${DEPLOY_DIR}/
+cp -r resources ${DEPLOY_DIR}/
+'''
+
+[tasks.package]
+dependencies = ["build", "prepare-deploy"]
+script = '''
+tar -czvf ${PROJECT_NAME}.tar.gz -C ${DEPLOY_DIR} .
+'''
+
+#[tasks.deploy]
+#dependencies = ["package"]
+#script = '''
+#scp ${PROJECT_NAME}.tar.gz user@server:/opt/${PROJECT_NAME}/
+#ssh user@server "cd /opt/${PROJECT_NAME}/ && tar -xzvf ${PROJECT_NAME}.tar.gz"
+#'''
