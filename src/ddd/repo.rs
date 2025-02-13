@@ -2,7 +2,7 @@
 use crate::ddd::core::{Identifier, Aggregate, DomainPrimitive, DomainModel};
 
 
-pub trait Repository {
+pub trait Repository : Sized {
 
     type ID : DomainPrimitive<i64> + Identifier;
     type Aggr : DomainModel + Aggregate<Self::ID>;
