@@ -6,7 +6,7 @@ use crate::domain::repo::student::StudentRepository;
 use crate::domain::service::student_services::StudentService;
 use crate::infra::repository::student::StudentRepositoryImpl;
 
-pub static CONTEXT: LazyLock<ServiceContext<StudentRepositoryImpl>> = LazyLock::new(|| ServiceContext::default());
+pub static CONTEXT: LazyLock<ServiceContext<StudentRepositoryImpl>> = LazyLock::new(ServiceContext::default);
 
 #[macro_export]
 macro_rules! pool {
@@ -39,10 +39,7 @@ impl<T: StudentRepository> ServiceContext<T> {
 impl Default for ServiceContext<StudentRepositoryImpl> {
     fn default() -> Self {
         ServiceContext {
-            rb: {
-                let rb = RBatis::new();
-                rb
-            },
+            rb: RBatis::new(),
             student_service: StudentService::new(StudentRepositoryImpl{})
         }
     }
