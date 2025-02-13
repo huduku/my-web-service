@@ -10,7 +10,7 @@ use crate::ddd::dto::MultipartFile;
 
 #[must_use]
 #[derive(Clone, Serialize, Deserialize)]
-pub struct ValidJson<T: Clone, DM: Clone + DomainModel<CQES=T>>(pub T, pub DM);
+pub struct ValidJson<T: Clone, DM: DomainModel<CQES=T>>(pub T, pub DM);
 
 #[async_trait]
 impl<T, S, DM> FromRequest<S> for ValidJson<T, DM>
@@ -41,7 +41,7 @@ where
 
 #[must_use]
 #[derive(Clone, Serialize, Deserialize)]
-pub struct ValidQuery<T: Clone, DM: Clone + DomainModel<CQES=T>>(pub T, pub DM);
+pub struct ValidQuery<T: Clone, DM: DomainModel<CQES=T>>(pub T, pub DM);
 
 #[async_trait]
 impl<T, S, DM> FromRequest<S> for ValidQuery<T, DM>
@@ -75,7 +75,7 @@ where
 
 
 #[derive(Clone, Serialize, Deserialize)]
-pub struct ValidFile<T, DM: Clone + DomainModel<CQES=T>>(pub T, pub DM);
+pub struct ValidFile<T, DM: DomainModel<CQES=T>>(pub T, pub DM);
 #[async_trait]
 impl<S, T, DM> FromRequest<S> for ValidFile<T, DM>
 where
@@ -137,12 +137,12 @@ where
 
 
 #[derive(Clone, Serialize, Deserialize)]
-pub struct ValidForm<T, DM: Clone + DomainModel<CQES=T>>(pub T, pub DM);
+pub struct ValidForm<T, DM: DomainModel<CQES=T>>(pub T, pub DM);
 #[async_trait]
 impl<S, T, DM> FromRequest<S> for ValidForm<T, DM>
 where
     T: Serialize + DeserializeOwned + Clone,
-    DM: DomainModel<CQES=T> + Clone + TryFrom<T> + Send + Sync + 'static,
+    DM: DomainModel<CQES=T> + TryFrom<T> + 'static,
     S: Send + Sync,
 {
     type Rejection = Res<String>;

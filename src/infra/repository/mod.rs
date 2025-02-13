@@ -7,8 +7,7 @@ use crate::ddd::dto::PageReq;
 
 use axum::extract::FromRef;
 use rbatis::{Error, Page, PageRequest};
-
-
+use crate::ddd::safe::Safes;
 
 pub struct DbRes<T>(pub Result<T, String>);
 
@@ -18,7 +17,7 @@ impl<T> From<Result<T, Error>> for DbRes<T> {
     }
 }
 
-impl<T: Clone> FromRef<PageReq<T>> for PageRequest {
+impl<T: Safes> FromRef<PageReq<T>> for PageRequest {
     fn from_ref(value: &PageReq<T>) -> Self {
         PageRequest::new(
             value.page_no.unwrap_or(1) as u64,
@@ -42,7 +41,7 @@ impl<DM: DomainModel> From<PageQuery<DM>> for PageRequest {
     }
 }
 
-impl<T: Clone + Send + Sync, DM: DomainModel<CQES=T> + TryFrom<T>> TryFrom<Page<T>> for PageRes<DM> {
+impl<T: Safes, DM: DomainModel<CQES=T> + TryFrom<T>> TryFrom<Page<T>> for PageRes<DM> {
     type Error = String;
     fn try_from(value: Page<T>) -> Result<Self, Self::Error> {
         let records = value.records;
