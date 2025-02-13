@@ -14,6 +14,3 @@ pub trait StudentRepository : Repository<ID=Id<i64>, Aggr=Student> {
     async fn count(&self, query: StudentQuery) -> Result<u64, String>;
     
 }
-
-
-// pub trait StudentRepo : StudentRepository<ID=Id<i64>, Aggr=Student> {}
