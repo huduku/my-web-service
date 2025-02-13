@@ -9,10 +9,9 @@ use crate::ddd::repo::Repository;
 use crate::infra::data::student::StudentDO;
 use crate::infra::repository::DbRes;
 
-use crate::pool;
 use axum::extract::FromRef;
 use rbatis::{Page, PageRequest};
-
+use crate::context::CONTEXT;
 
 pub struct StudentRepositoryImpl {}
 
@@ -31,7 +30,7 @@ impl Repository for StudentRepositoryImpl {
     }
 
     async fn find(&self, id: Self::Id) -> Result<Self::Aggr, String> {
-        let DbRes(res) = StudentDO::select_by_id(pool!(), id.0).await.into();
+        let DbRes(res) = StudentDO::select_by_id(&CONTEXT.rb, id.0).await.into();
         match res {
             Ok(stu) => {
                 match stu {
@@ -45,8 +44,8 @@ impl Repository for StudentRepositoryImpl {
 
     async fn save(&self, stu: Student) -> Result<(), String> {
         let res = match stu.id { 
-            Some(_) => StudentDO::update_by_column(pool!(), &stu.into(), "id").await,
-            None => StudentDO::insert(pool!(), &stu.into()).await,
+            Some(_) => StudentDO::update_by_column(&CONTEXT.rb, &stu.into(), "id").await,
+            None => StudentDO::insert(&CONTEXT.rb, &stu.into()).await,
         };
         
         match res {
@@ -61,7 +60,7 @@ impl Repository for StudentRepositoryImpl {
     }
 
     async fn remove(&self, id: Id<i64>) -> Result<(), String> {
-        let res = StudentDO::delete_by_column(pool!(), "id", id.0).await;
+        let res = StudentDO::delete_by_column(&CONTEXT.rb, "id", id.0).await;
         match res {
             Ok(r) => {
                 if r.rows_affected == 1 {
@@ -81,7 +80,7 @@ impl StudentRepository for StudentRepositoryImpl {
     
     async fn find_one(&self, stu_no: StuNo) -> Result<Student, String> {
         let DbRes(res)  = 
-            StudentDO::select_by_stu_no(pool!(), stu_no.0).await.into();
+            StudentDO::select_by_stu_no(&CONTEXT.rb, stu_no.0).await.into();
         match res {
             Ok(stu) => {
                 match stu {
@@ -97,7 +96,7 @@ impl StudentRepository for StudentRepositoryImpl {
         let page: PageRequest = PageRequest::from_ref(&page_query);
         let stu = page_query.query.map(|q| q.into());
         let DbRes(db_res) =  
-            DbRes::<Page<StudentDO>>::from(StudentDO::select_page(pool!(), &page, &stu).await);
+            DbRes::<Page<StudentDO>>::from(StudentDO::select_page(&CONTEXT.rb, &page, &stu).await);
         match db_res { 
             Ok(res) => Ok(PageRes::<Student>::try_from(res)?),
             Err(e) => Err(e)
