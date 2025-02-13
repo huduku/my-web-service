@@ -2,7 +2,8 @@ use std::sync::LazyLock;
 use log::LevelFilter;
 use rbatis::intercept_log::LogInterceptor;
 use rbatis::RBatis;
-use crate::app::srv::student_service::AppStudentSrv;
+use crate::app::srv::container::AppSrvContainer;
+
 
 pub static CONTEXT: LazyLock<ServiceContext> = LazyLock::new(ServiceContext::default);
 
@@ -16,7 +17,7 @@ macro_rules! pool {
 
 pub struct ServiceContext {
     pub rb: RBatis,
-    pub app_student_srv : AppStudentSrv
+    pub app_srv_container: AppSrvContainer
 }
 
 impl ServiceContext {
@@ -38,7 +39,7 @@ impl Default for ServiceContext {
     fn default() -> Self {
         ServiceContext {
             rb: RBatis::new(),
-            app_student_srv: AppStudentSrv::default(),
+            app_srv_container: AppSrvContainer::default(),
         }
     }
 }
