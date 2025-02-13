@@ -1,9 +1,9 @@
-use crate::api::res::PageRes;
-use crate::domain::cmd::student_cmd::StudentQuery;
-use crate::ddd::core::{Aggregate, DomainModel, DomainPrimitive, Id, Identifier, PageQuery};
-use crate::domain::entity::student::Student;
 use crate::api::primitive::students::StuNo;
+use crate::api::res::PageRes;
+use crate::ddd::core::{Id, PageQuery};
 use crate::ddd::repo::Repository;
+use crate::domain::cmd::student_cmd::StudentQuery;
+use crate::domain::entity::student::Student;
 
 pub trait StudentRepository : Repository<ID=Id<i64>, Aggr=Student> {
     
