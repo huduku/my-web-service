@@ -24,7 +24,7 @@ impl ServiceContext {
     pub async fn init_db(&self) {
         self.rb.init(
             rbdc_mysql::driver::MysqlDriver {},
-            "mysql://root:123456@127.0.0.1:3306/test",
+            "mysql://root:123456@127.0.0.1:3306/my_web_service",
         )
             .unwrap();
 
