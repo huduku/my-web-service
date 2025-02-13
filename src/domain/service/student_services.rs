@@ -10,7 +10,7 @@ pub struct StudentService<T: StudentRepository + 'static> {
     pub(crate) student_repository : &'static T
 }
 
-impl<T: StudentRepository + 'static> StudentService<T> {
+impl<T: StudentRepository> StudentService<T> {
 
     pub fn new(student_repository: &'static T) -> Self {
         Self {
