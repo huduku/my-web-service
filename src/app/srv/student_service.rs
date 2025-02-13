@@ -5,8 +5,8 @@ pub struct AppStudentSrv {
     pub student_service: StudentService<StudentRepositoryImpl>
 }
 
-impl AppStudentSrv {
-    pub fn new() -> Self {
+impl Default for AppStudentSrv {
+    fn default() -> Self {
         Self {
             student_service: StudentService::new(StudentRepositoryImpl{})
         }

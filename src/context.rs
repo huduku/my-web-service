@@ -38,7 +38,7 @@ impl Default for ServiceContext {
     fn default() -> Self {
         ServiceContext {
             rb: RBatis::new(),
-            app_student_srv: AppStudentSrv::new(),
+            app_student_srv: AppStudentSrv::default(),
         }
     }
 }
