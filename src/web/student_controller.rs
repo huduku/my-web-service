@@ -17,6 +17,10 @@ fn student_service() -> &'static StudentService<StudentRepositoryImpl> {
     &CONTEXT.app_srv_container.student_service
 }
 
+fn student_repository() -> &'static StudentRepositoryImpl {
+    CONTEXT.app_repo_context.student_repository
+}
+
 pub(crate) async fn get_student_handler(
     ValidQuery(id_query,_): ValidQuery<IdCommand<i64>, IdOper<i64>>,
 ) -> impl IntoResponse {
