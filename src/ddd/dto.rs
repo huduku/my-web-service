@@ -1,5 +1,8 @@
 use serde::{Deserialize, Serialize};
 
+
+#[allow(E0277)]
+#[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct MultipartFile {
     pub filename: String,
     pub content_type: Option<String>,

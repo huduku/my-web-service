@@ -1,6 +1,6 @@
 use std::fmt::Debug;
 use crate::ddd::core::{DomainModel, Id, IdOper, Identifiable, PageNo, PageQuery, PageSize};
-use crate::ddd::dto::PageReq;
+use crate::ddd::dto::{MultipartFile, PageReq};
 
 pub trait Safes : Sized + Debug + Clone + Send + Sync {}
 
@@ -18,6 +18,7 @@ impl Safes for PageNo {}
 
 impl Safes for PageSize {}
 
+impl Safes for MultipartFile {}
 
 impl<DM: DomainModel> Safes for PageQuery<DM> {}
 
