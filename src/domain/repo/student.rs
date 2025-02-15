@@ -2,7 +2,7 @@ use crate::api::primitive::students::StuNo;
 use crate::api::res::PageRes;
 use crate::ddd::core::{Id, PageQuery};
 use crate::ddd::repo::Repository;
-use crate::domain::cmd::student_cmd::StudentQuery;
+use crate::app::cmd::student_cmd::StudentQuery;
 use crate::domain::entity::student::Student;
 
 pub trait StudentRepository : Repository<RawId=i64, Id=Id<i64>, Aggr=Student> {

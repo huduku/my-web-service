@@ -1,5 +1,5 @@
 use crate::api::cmd::IdCommand;
-use crate::domain::cmd::student_cmd::{StudentCreate, StudentQuery, StudentUpdate};
+use crate::app::cmd::student_cmd::{StudentCreate, StudentQuery, StudentUpdate};
 use axum::response::IntoResponse;
 
 use crate::infra::web::req::{ValidForm, ValidJson, ValidQuery};

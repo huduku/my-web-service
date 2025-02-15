@@ -2,7 +2,7 @@
 use crate::api::cmd::IdCommand;
 use crate::api::res::PageRes;
 use crate::ddd::core::{DomainPrimitive, Id, PageQuery};
-use crate::domain::cmd::student_cmd::StudentQuery;
+use crate::app::cmd::student_cmd::StudentQuery;
 use crate::domain::entity::student::Student;
 use crate::domain::repo::student::StudentRepository;
 

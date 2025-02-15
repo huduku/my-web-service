@@ -4,7 +4,7 @@ use crate::ddd::core::{DomainModel, DomainPrimitive, Id, IdOper};
 use crate::domain::entity::student::Student;
 use crate::api::primitive::students::{Address, Age, ClassId, StuNo, UserName};
 use crate::ddd::safe::Safes;
-use crate::domain::cmd::student_cmd::{StudentCreate, StudentQuery, StudentUpdate};
+use crate::app::cmd::student_cmd::{StudentCreate, StudentQuery, StudentUpdate};
 
 #[derive(Clone, Debug, Serialize, Deserialize)]
 pub struct StudentDO {
