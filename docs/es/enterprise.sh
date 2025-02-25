@@ -1,3 +1,6 @@
+
+
+curl -XPUT -H 'Content-Type: application/json; charset=UTF-8' -H "Authorization: ${BASIC_AUTH}" "${ES_SERVER_URL}/${INDEX_NAME_PREFIX}enterprise_v${DATE}" -d '
 {
   "mappings": {
     "dynamic": false,
@@ -153,3 +156,4 @@
     "company": {}
   }
 }
+'
