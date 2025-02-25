@@ -1,6 +1,6 @@
 
 
-curl -XPUT -H 'Content-Type: application/json; charset=UTF-8' -H "Authorization: ${BASIC_AUTH}" "${ES_SERVER_URL}/${INDEX_NAME_PREFIX}enterprise_v${DATE}" -d '
+curl -XPUT -H 'Content-Type: application/json; charset=UTF-8' -H "Authorization: ${BASIC_AUTH}" "${ES_SERVER_URL}/${INDEX_NAME_PREFIX}corp_v${DATE}" -d '
 {
   "mappings": {
     "dynamic": false,
@@ -153,7 +153,7 @@ curl -XPUT -H 'Content-Type: application/json; charset=UTF-8' -H "Authorization:
     }
   },
   "aliases": {
-    "company": {}
+    "corp": {}
   }
 }
 '
