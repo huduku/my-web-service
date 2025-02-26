@@ -72,7 +72,7 @@
             "functions": [
               {
                 "script_score": {
-                  "script": {
+                  "script": { // 注册资本
                     "source": "doc['reg_cap'].empty ? 0 : Math.log10(doc['reg_cap'].value + 2)"
                   }
                 }
@@ -95,7 +95,7 @@
             "functions": [
               {
                 "script_score": {
-                  "script": {
+                  "script": { // 本身评分
                     "source": "doc['score'].empty ? 0 : Math.log10(doc['score'].value + 2)"
                   }
                 }
@@ -117,7 +117,7 @@
           "bool": {
             "must": [
               {
-                "term": {
+                "term": { // 运营状态
                   "business_status_code": {
                     "value": "1"
                   }
@@ -139,7 +139,7 @@
             "must": [
               {
                 "term": {
-                  "name": {
+                  "name": { // 名称匹配
                     "value": "小米科技"
                   }
                 }
@@ -159,7 +159,7 @@
           "bool": {
             "must": [
               {
-                "term": {
+                "term": { // 执行信息
                   "executives": {
                     "value": "小米科技"
                   }
@@ -180,7 +180,7 @@
           "bool": {
             "must": [
               {
-                "term": {
+                "term": { // 运营名称
                   "oper_name": {
                     "value": "小米科技"
                   }
