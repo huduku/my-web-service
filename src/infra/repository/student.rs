@@ -21,11 +21,11 @@ impl Repository for StudentRepositoryImpl {
     type Id = Id<i64>;
     type Aggr = Student;
 
-    async fn attach(&self, aggr: Student) {
+    async fn attach(&self, _aggr: Student) {
         todo!()
     }
 
-    async fn detach(&self, aggr: Student) {
+    async fn detach(&self, _aggr: Student) {
         todo!()
     }
 
@@ -103,7 +103,7 @@ impl StudentRepository for StudentRepositoryImpl {
         }
     }
 
-    async fn count(&self, query: StudentQuery) -> Result<u64, String> {
+    async fn count(&self, _query: StudentQuery) -> Result<u64, String> {
         todo!()
     }
 }
